@@ -83,6 +83,7 @@ GRing_Flash:	; Routine 6
 		clr.b	(v_player+obAnim).w		; make Sonic invisible
 		move.b	#1,(f_bigring).w		; stop Sonic getting bonuses
 		andi.b	#~(mask2ndShield+mask2ndInvinc),(v_player+obStatus2nd).w	; Should clear Shield and Invincibility ($FC)
+		bsr.w	GotThroughAct			; Red2010 softlock fix
 
 .skip:
 		bsr.s	GRing_LoadGfx			; RetroKoH VRAM Overhaul
