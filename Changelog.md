@@ -799,6 +799,11 @@
  Function: Fixes a minor bug w/ horizontal springs sometimes making Sonic face incorrectly.  
  Date: 2024-08-21  
 
+## End-of-Level Softlock Fix
+ Credit: Red2010/Hame  
+ Function: A softlock caused by collecting the Giant Ring without hitting the Signpost has been fixed AND circumvented.  
+ Date: 2024-12-26  
+
 ## Monitor Solidity Fix
  (Incomplete)  
  Credit: RetroKoH  
