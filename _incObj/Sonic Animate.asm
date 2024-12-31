@@ -18,51 +18,51 @@ Sonic_Animate:
 
 .do:
 		add.w	d0,d0
-		adda.w	(a1,d0.w),a1		; jump to appropriate animation	script
+		adda.w	(a1,d0.w),a1			; jump to appropriate animation	script
 		move.b	(a1),d0
-		bmi.s	.walkrunroll		; if animation is walk/run/roll/jump, branch
-		move.b	obStatus(a0),d1
-		andi.b	#maskFacing,d1
+		bmi.s	.walkrunroll			; if animation is walk/run/roll/jump, branch
+		moveq	#maskFacing,d1
+		and.b	obStatus(a0),d1
 		andi.b	#$FC,obRender(a0)
 		or.b	d1,obRender(a0)
-		subq.b	#1,obTimeFrame(a0)	; subtract 1 from frame duration
-		bpl.s	.delay				; if time remains, branch
-		move.b	d0,obTimeFrame(a0)	; load frame duration
+		subq.b	#1,obTimeFrame(a0)		; subtract 1 from frame duration
+		bpl.s	.delay					; if time remains, branch
+		move.b	d0,obTimeFrame(a0)		; load frame duration
 
 .loadframe:
 		moveq	#0,d1
-		move.b	obAniFrame(a0),d1	; load current frame number
-		move.b	1(a1,d1.w),d0		; read sprite number from script
+		move.b	obAniFrame(a0),d1		; load current frame number
+		move.b	1(a1,d1.w),d0			; read sprite number from script
 		; MarkeyJester Art Limit Extensions
 		; Animations extended from [$00 - $7F] to [$00 - $FC]
-		cmpi.b	#$FD,d0				; is it a flag from FD to FF?
-		bhs.s	.end_FF				; if so, branch to flag routines
+		cmpi.b	#$FD,d0					; is it a flag from FD to FF?
+		bhs.s	.end_FF					; if so, branch to flag routines
 		; Art Limit Extensions End
-
-.next:
-		move.b	d0,obFrame(a0)		; load sprite number
-		addq.b	#1,obAniFrame(a0)	; next frame number
+		move.b	d0,obFrame(a0)			; load sprite number
+		addq.b	#1,obAniFrame(a0)		; next frame number
 
 .delay:
 		rts	
 ; ===========================================================================
 
 .end_FF:
-		addq.b	#1,d0			; is the end flag = $FF	?
-		bne.s	.end_FE			; if not, branch
-		clr.b	obAniFrame(a0)	; restart the animation
-		move.b	1(a1),d0		; read sprite number
-		bra.s	.next
+		addq.b	#1,d0					; is the end flag = $FF	?
+		bne.s	.end_FE					; if not, branch
+		clr.b	obAniFrame(a0)			; restart the animation
+		move.b	1(a1),obFrame(a0)		; read and load sprite number
+		addq.b	#1,obAniFrame(a0)		; next frame number
+		rts
 ; ===========================================================================
 
 .end_FE:
-		addq.b	#1,d0				; is the end flag = $FE	?
-		bne.s	.end_FD				; if not, branch
-		move.b	2(a1,d1.w),d0		; read the next	byte in	the script
-		sub.b	d0,obAniFrame(a0)	; jump back d0 bytes in the script
+		addq.b	#1,d0					; is the end flag = $FE	?
+		bne.s	.end_FD					; if not, branch
+		move.b	2(a1,d1.w),d0			; read the next	byte in	the script
+		sub.b	d0,obAniFrame(a0)		; jump back d0 bytes in the script
 		sub.b	d0,d1
-		move.b	1(a1,d1.w),d0		; read sprite number
-		bra.s	.next
+		move.b	1(a1,d1.w),obFrame(a0)	; read and load sprite number
+		addq.b	#1,obAniFrame(a0)		; next frame number
+		rts
 ; ===========================================================================
 
 .end_FD:
@@ -75,12 +75,12 @@ Sonic_Animate:
 ; ===========================================================================
 
 .walkrunroll:
-		subq.b	#1,obTimeFrame(a0)	; subtract 1 from frame duration
-		bpl.s	.delay				; if time remains, branch
-		addq.b	#1,d0				; is animation walking/running?
-		bne.w	.rolljump			; if not, branch
+		subq.b	#1,obTimeFrame(a0)		; subtract 1 from frame duration
+		bpl.s	.delay					; if time remains, branch
+		addq.b	#1,d0					; is animation walking/running?
+		bne.w	.rolljump				; if not, branch
 		moveq	#0,d1
-		move.b	obAngle(a0),d0		; get Sonic's angle
+		move.b	obAngle(a0),d0			; get Sonic's angle
  	; Mercury Better handling of angles
 		bmi.s	.ble
 		beq.s	.ble
@@ -88,14 +88,14 @@ Sonic_Animate:
 
 .ble:
 	; Better handling of angles end
-		move.b	obStatus(a0),d2
-		andi.b	#maskFacing,d2		; is Sonic mirrored horizontally?
-		bne.s	.flip				; if yes, branch
-		not.b	d0					; reverse angle
+		moveq	#maskFacing,d2
+		and.b	obStatus(a0),d2			; is Sonic mirrored horizontally?
+		bne.s	.flip					; if yes, branch
+		not.b	d0						; reverse angle
 
 .flip:
-		addi.b	#$10,d0				; add $10 to angle
-		bpl.s	.noinvert			; if angle is $0-$7F, branch
+		addi.b	#$10,d0					; add $10 to angle
+		bpl.s	.noinvert				; if angle is $0-$7F, branch
 		moveq	#3,d1
 
 .noinvert:
@@ -104,13 +104,11 @@ Sonic_Animate:
 		or.b	d2,obRender(a0)
 		btst	#staPush,obStatus(a0)	; is Sonic pushing something?
 		bne.w	.push					; if yes, branch
-
-		lsr.b	#4,d0				; divide angle by $10
-		andi.b	#6,d0				; angle	must be	0, 2, 4	or 6
-		moveq	#0,d2
-		move.w	obInertia(a0),d2	; get Sonic's speed
+		lsr.b	#4,d0					; divide angle by $10
+		andi.b	#6,d0					; angle	must be	0, 2, 4	or 6
+		move.w	obInertia(a0),d2		; get Sonic's speed
 		bpl.s	.nomodspeed
-		neg.w	d2					; modulus speed
+		neg.w	d2						; modulus speed
 
 .nomodspeed:
 	if PeeloutEnabled=1
@@ -171,8 +169,8 @@ Sonic_Animate:
 .belowmax2:
 		lsr.w	#8,d2
 		move.b	d2,obTimeFrame(a0)	; modify frame duration
-		move.b	obStatus(a0),d1
-		andi.b	#maskFacing,d1
+		moveq	#maskFacing,d1
+		and.b	obStatus(a0),d1
 		andi.b	#$FC,obRender(a0)
 		or.b	d1,obRender(a0)
 		bra.w	.loadframe
@@ -194,8 +192,8 @@ Sonic_Animate:
 		lsr.w	#6,d2
 		move.b	d2,obTimeFrame(a0)	; modify frame duration
 		lea		SonAni_Push(pc),a1
-		move.b	obStatus(a0),d1
-		andi.b	#maskFacing,d1
+		moveq	#maskFacing,d1
+		and.b	obStatus(a0),d1
 		andi.b	#$FC,obRender(a0)
 		or.b	d1,obRender(a0)
 		bra.w	.loadframe

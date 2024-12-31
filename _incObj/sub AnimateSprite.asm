@@ -12,8 +12,8 @@ AnimateSprite:
 		beq.s	Anim_Run				; if not, branch
 
 		move.b	d0,obPrevAni(a0)
-		clr.b	obAniFrame(a0)		; reset animation
-		clr.b	obTimeFrame(a0)		; reset frame duration
+		clr.b	obAniFrame(a0)			; reset animation
+		clr.b	obTimeFrame(a0)			; reset frame duration
 
 Anim_Run:
 		subq.b	#1,obTimeFrame(a0)		; subtract 1 from frame duration
@@ -33,58 +33,64 @@ Anim_Run:
 Anim_Next:
 		move.b	d0,d1
 		andi.b	#$1F,d0
-		move.b	d0,obFrame(a0)		; load sprite number
+		move.b	d0,obFrame(a0)			; load sprite number
 		move.b	obStatus(a0),d0
 		rol.b	#3,d1
 		eor.b	d0,d1
-		andi.b	#3,d1				; (maskFlipX + maskFlipY)?
+		andi.b	#3,d1					; (maskFlipX + maskFlipY)?
 		andi.b	#$FC,obRender(a0)
 		or.b	d1,obRender(a0)
-		addq.b	#1,obAniFrame(a0)	; next frame number
+		addq.b	#1,obAniFrame(a0)		; next frame number
 
 Anim_Wait:
 		rts	
 ; ===========================================================================
 
-Anim_End_FF:
-		addq.b	#1,d0		; is the end flag = $FF	?
-		bne.s	Anim_End_FE	; if not, branch
-		clr.b	obAniFrame(a0) ; restart the animation
-		move.b	1(a1),d0	; read sprite number
+Anim_End_FF:					; code FF - return to beginning of animation
+		addq.b	#1,d0					; is the end flag = $FF	?
+		bne.s	Anim_End_FE				; if not, branch
+		clr.b	obAniFrame(a0)			; restart the animation
+		move.b	1(a1),d0				; read sprite number
 		bra.s	Anim_Next
 ; ===========================================================================
 
-Anim_End_FE:
-		addq.b	#1,d0		; is the end flag = $FE	?
-		bne.s	Anim_End_FD	; if not, branch
-		move.b	2(a1,d1.w),d0	; read the next	byte in	the script
-		sub.b	d0,obAniFrame(a0) ; jump back d0 bytes in the script
+Anim_End_FE:					; code FE - go back (specified number) bytes
+		addq.b	#1,d0					; is the end flag = $FE	?
+		bne.s	Anim_End_FD				; if not, branch
+		move.b	2(a1,d1.w),d0			; read the next	byte in	the script
+		sub.b	d0,obAniFrame(a0)		; jump back d0 bytes in the script
 		sub.b	d0,d1
-		move.b	1(a1,d1.w),d0	; read sprite number
+		move.b	1(a1,d1.w),d0			; read sprite number
 		bra.s	Anim_Next
 ; ===========================================================================
 
-Anim_End_FD:
-		addq.b	#1,d0		; is the end flag = $FD	?
-		bne.s	Anim_End_FC	; if not, branch
-		move.b	2(a1,d1.w),obAnim(a0) ; read next byte, run that animation
+Anim_End_FD:					; code FD - run specified animation
+		addq.b	#1,d0					; is the end flag = $FD	?
+		bne.s	Anim_End_FC				; if not, branch
+		move.b	2(a1,d1.w),obAnim(a0)	; read next byte, run that animation
+		rts
+; ===========================================================================
 
-Anim_End_FC:
-		addq.b	#1,d0		; is the end flag = $FC	?
-		bne.s	Anim_End_FB	; if not, branch
-		addq.b	#2,obRoutine(a0) ; jump to next routine
+Anim_End_FC:					; code FC - increment routine counter
+		addq.b	#1,d0					; is the end flag = $FC	?
+		bne.s	Anim_End_FB				; if not, branch
+		addq.b	#2,obRoutine(a0)		; jump to next routine
+		rts
+; ===========================================================================
 
-Anim_End_FB:
-		addq.b	#1,d0		; is the end flag = $FB	?
-		bne.s	Anim_End_FA	; if not, branch
-		clr.b	obAniFrame(a0) ; reset animation
-		clr.b	ob2ndRout(a0)	; reset	2nd routine counter
+Anim_End_FB:					; code FB - reset animation and 2nd object routine counter
+		addq.b	#1,d0					; is the end flag = $FB	?
+		bne.s	Anim_End_FA				; if not, branch
+		clr.b	obAniFrame(a0)			; reset animation
+		clr.b	ob2ndRout(a0)			; reset	2nd routine counter
+		rts
+; ===========================================================================
 
-Anim_End_FA:
-		addq.b	#1,d0		; is the end flag = $FA	?
-		bne.s	Anim_End	; if not, branch
-		addq.b	#2,ob2ndRout(a0) ; jump to next routine
+Anim_End_FA:					; code FA - increment 2nd routine counter
+		addq.b	#1,d0					; is the end flag = $FA	?
+		bne.s	.end					; if not, branch
+		addq.b	#2,ob2ndRout(a0)		; jump to next routine
 
-Anim_End:
+.end:
 		rts	
 ; End of function AnimateSprite
