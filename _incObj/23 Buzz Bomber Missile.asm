@@ -5,8 +5,8 @@
 Missile:
 		moveq	#0,d0
 		move.b	obRoutine(a0),d0
-		move.w	Msl_Index(pc,d0.w),d1
-		jmp		Msl_Index(pc,d1.w)
+		move.w	Msl_Index(pc,d0.w),d0
+		jmp		Msl_Index(pc,d0.w)
 ; ===========================================================================
 Msl_Index:	offsetTable
 		offsetTableEntry.w Msl_Main
@@ -19,7 +19,7 @@ msl_parent = objoff_3C
 ; ===========================================================================
 
 Msl_Main:	; Routine 0
-		subq.w	#1,objoff_32(a0)
+		subq.w	#1,buzz_timedelay(a0)
 		bpl.s	Msl_ChkCancel
 		addq.b	#2,obRoutine(a0)
 		move.l	#Map_Missile,obMap(a0)
