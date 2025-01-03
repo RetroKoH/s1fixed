@@ -51,6 +51,7 @@ mus_Continue			ds.b 1		; $10
 mus_Credits				ds.b 1		; $11
 mus_Drowning			ds.b 1		; $12
 mus_Emerald				ds.b 1		; $13
+mus_Options				ds.b 1		; $14
 
 mus__End =				*			; next ID after last music
 

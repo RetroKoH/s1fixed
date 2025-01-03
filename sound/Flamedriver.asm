@@ -4781,6 +4781,7 @@ z80_MusicBanks:
 	db zmake68kBank(MusData_Credits)
 	db zmake68kBank(MusData_Drowning)
 	db zmake68kBank(MusData_Emerald)
+	db zmake68kBank(MusData_Options)	
 ; ---------------------------------------------------------------------------
 	if $ > z80_stack_top
 		fatal "Your Z80 tables won't fit before the z80 stack. It's \{$-z80_stack_top}h bytes past the start of the bottom of the stack, at \{z80_stack_top}h"
@@ -4992,7 +4993,8 @@ MusicPointers label *
 	declsong MusData_Credits
 	declsong MusData_Drowning
 	declsong MusData_Emerald
-
+	declsong MusData_Options
+	
 	ifndef zMusIDPtr__End
 zMusIDPtr__End label *
 	endif
@@ -5312,5 +5314,5 @@ MusData_Continue:		include "sound/music/Mus10 - Continue Screen.asm"
 MusData_Credits:		include "sound/music/Mus11 - Credits.asm"
 MusData_Drowning:		include "sound/music/Mus12 - Drowning.asm"
 MusData_Emerald:		include "sound/music/Mus13 - Get Emerald.asm"
-
+MusData_Options:		include "sound/music/Mus14 - Options.asm"
 	finishBank
