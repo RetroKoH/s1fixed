@@ -22,6 +22,7 @@ ptr_mus10:	SMPS_MUSIC_METADATA	Music10, s1TempotoS3($07), SMPS_MUSIC_METADATA_FO
 ptr_mus11:	SMPS_MUSIC_METADATA	Music11, s1TempotoS3($33), SMPS_MUSIC_METADATA_FORCE_PAL_SPEED	; Credits
 ptr_mus12:	SMPS_MUSIC_METADATA	Music12, s1TempotoS3($02), SMPS_MUSIC_METADATA_FORCE_PAL_SPEED	; Drowning
 ptr_mus13:	SMPS_MUSIC_METADATA	Music13, s1TempotoS3($06), 0	; Emerald
+ptr_mus14:	SMPS_MUSIC_METADATA	Music14, s1TempotoS3($06), 0	; Options
 ptr_musend
 
 ; ---------------------------------------------------------------------------
@@ -66,3 +67,6 @@ Music12:		include "sound/music/Mus12 - Drowning.asm"
 	even
 Music13:		include "sound/music/Mus13 - Get Emerald.asm"
 	even
+Music14:		include "sound/music/Mus14 - Options.asm"
+	even
+	

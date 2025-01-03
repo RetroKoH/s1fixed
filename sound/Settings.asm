@@ -48,7 +48,7 @@ SMPS_SoundTest	= 0
 ;	| If 1, some some extra logic for my 'sound test' homebrew is enabled.
 
 SMPS_S1DACSamples		= 1
-SMPS_S2DACSamples		= 0
+SMPS_S2DACSamples		= 1
 SMPS_S3DACSamples		= 0
 SMPS_SKDACSamples		= 0
 SMPS_S3DDACSamples		= 0

@@ -27,6 +27,7 @@ mus_Continue =		SMPS_id(ptr_mus10)
 mus_Credits =		SMPS_id(ptr_mus11)
 mus_Drowning =		SMPS_id(ptr_mus12)
 mus_Emerald =		SMPS_id(ptr_mus13)
+mus_Options =		SMPS_id(ptr_mus14)
 
 mus__Last =			SMPS_id(ptr_musend)-1
 
