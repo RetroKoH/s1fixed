@@ -182,6 +182,7 @@ UpdateMusic:
 		jsr	PlaySoundID(pc)
 ; loc_71BC8:
 .nonewsound:
+	if SpinDashEnabled=1
 	; Spin Dash SFX
 		tst.b	(v_spindashsfx2).w
 		beq.s	.cont
@@ -189,6 +190,7 @@ UpdateMusic:
 
 .cont:
 	; Spin Dash SFX end
+	endif
 		lea		SMPS_RAM.v_music_dac_track(a6),a5
 		tst.b	SMPS_Track.PlaybackControl(a5)	; Is DAC track playing?
 		bpl.s	.dacdone					; Branch if not
@@ -992,6 +994,7 @@ Sound_SpecialSFX:
 		bne.w	Sound_ClearPriority
 		tst.b	SMPS_RAM.f_fadein_flag(a6)
 		bne.w	Sound_ClearPriority
+	if SpinDashEnabled=1
 		clr.b	(v_spindashsfx1).w
 		cmp.b	#sfx_SpinDash,d7		; is this the Spin Dash sound?
 		bne.s	.cont3	; if not, branch
@@ -1013,6 +1016,7 @@ Sound_SpecialSFX:
 		move.w	(sp)+,d0
 
 .cont3:
+	endif
 		movea.l	Go_SoundIndex(pc),a0
 		sub.b	#$A0,d7
 		bra.w	SoundEffects_Common
@@ -1027,7 +1031,9 @@ Sound_PlaySFX:
 		bne.w	Sound_ClearPriority		; Exit if it is
 		tst.b	SMPS_RAM.f_fadein_flag(a6)		; Is music being faded in?
 		bne.w	Sound_ClearPriority		; Exit if it is
+	if SpinDashEnabled=1
 		clr.b	(v_spindashsfx1).w		; Spin Dash SFX
+	endif
 		cmpi.b	#sfx_Ring,d7			; is ring sound	effect played?
 		bne.s	.sfx_notRing			; if not, branch
 		tst.b	SMPS_RAM.v_ring_speaker(a6)		; Is the ring sound playing on right speaker?
@@ -1045,6 +1051,7 @@ Sound_PlaySFX:
 		move.b	#$80,SMPS_RAM.f_push_playing(a6)	; Mark it as playing
 ; Sound_notA7:
 .sfx_notPush:
+	if SpinDashEnabled=1
 	; Spin Dash SFX
 		cmp.b	#sfx_SpinDash,d7		; is this the Spin Dash sound?
 		bne.s	.cont3					; if not, branch
@@ -1067,6 +1074,7 @@ Sound_PlaySFX:
 
 .cont3:
 	; Spin Dash SFX End
+	endif
 		movea.l	(Go_SoundIndex).l,a0
 		subi.b	#sfx__First,d7		; Make it 0-based
 
@@ -1126,6 +1134,7 @@ SoundEffects_Common:
 		add.l	a3,d0				; Relative pointer
 		move.l	d0,SMPS_Track.DataPointer(a5)	; Store track pointer
 		move.w	(a1)+,SMPS_Track.Transpose(a5)	; load FM/PSG channel modifier
+	if SpinDashEnabled=1
 	; Spin Dash SFX
 		tst.b	(v_spindashsfx1).w	; is the Spin Dash sound playing?
 		beq.s	.cont		; if not, branch
@@ -1136,6 +1145,7 @@ SoundEffects_Common:
 
 	.cont:
 	; Spin Dash SFX End
+	endif
 		move.b	#1,SMPS_Track.DurationTimeout(a5)	; Set duration of first "note"
 		move.b	d6,SMPS_Track.StackPointer(a5)	; set "gosub" (coord flag $F8) stack init value
 		tst.b	d4				; Is this a PSG channel?
