@@ -4,6 +4,7 @@
 ; ---------------------------------------------------------------------------
 
 SuperStars:
+	if SuperMod=1
 	; LavaGaming Object Routine Optimization
 		tst.b	obRoutine(a0)
 		bne.s	SStars_Next
@@ -76,5 +77,6 @@ loc_1E1AA:
 ; ===========================================================================
 
 SStars_Delete:
+	endif
 		jmp		(DeleteObject).l
 ; ===========================================================================

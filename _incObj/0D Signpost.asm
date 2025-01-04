@@ -189,6 +189,7 @@ Sign_SparkPos:
 Sign_SonicRun:	; Routine 6
 		tst.w	(v_debuguse).w	; is debug mode	on?
 		bne.s	ret_EC86	; if yes, branch
+	if SignpostControlLockFix=1
 	; Signpost Routine Fix
 	; This function's checks are a mess, creating an edgecase where it's
 	; possible for the player to avoid having their controls locked by
@@ -202,6 +203,15 @@ Sign_SonicRun:	; Routine 6
 		move.b	#1,(f_lockctrl).w			; lock controls
 		move.w	#btnR<<8,(v_jpadhold2).w	; make Sonic run to the right
 	; Old check moved to above -- Signpost Routine Fix
+	else
+		btst	#staAir,(v_player+obStatus).w
+		bne.s	.skiplockcontrols
+		move.b	#1,(f_lockctrl).w			; lock controls
+		move.w	#btnR<<8,(v_jpadhold2).w	; make Sonic run to the right
+.skiplockcontrols:
+		tst.b	(v_player+obID).w			; Check if Sonic's object has been deleted (because he entered the giant ring)
+		beq.s	loc_EC86
+	endif
 		move.w	(v_player+obX).w,d0
 		move.w	(v_limitright2).w,d1
 		addi.w	#$128,d1
