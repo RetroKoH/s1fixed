@@ -107,6 +107,11 @@ OrbinautAnimationTweak: = 1
 ; Function: Makes the SLZ Orbinauts beatable by giving them behaviour similar to Sonic 4's.
 SLZOrbinautBehaviourMod: = 1
 
+; Name: Signpost Control Lock Bypass Fix
+; Credit: Fix by Clownacy, reintroduced as mod by Amy Farbright
+; Function: Fixes an edge case where being offscreen and in the air as the score tally starts avoids locking controls to run forward
+SignpostControlLockFix: = 1
+
 ; Name: Speed Up/Instant Score Tally
 ; Credit: Mercury/RetroKoH
 ; Function: Allows the player to hold a button to speed up the score tally, or just have it occur immediately
