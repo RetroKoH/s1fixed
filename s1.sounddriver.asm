@@ -2804,6 +2804,7 @@ ptr_sndD9:	dc.l SoundD9
 ptr_sndDA:	dc.l SoundDA
 ptr_sndDB:	dc.l SoundDB
 ptr_sndDC:	dc.l SoundDC
+ptr_sndDD:	dc.l SoundDD
 ptr_specend
 
 ; ---------------------------------------------------------------------------
@@ -2935,7 +2936,8 @@ SoundDB:	include	"sound/sfx/SndDB - Lightning Attack.asm"
 		even
 SoundDC:	include	"sound/sfx/SndDC - Drop Dash.asm"
 		even
-
+SoundDD:	include	"sound/sfx/SndDD - Perfect.asm"
+		even
 ; ---------------------------------------------------------------------------
 ; 'Sega' chant PCM sample
 ; ---------------------------------------------------------------------------
