@@ -5472,7 +5472,9 @@ dplcTiles := 0					; 128k Boundary Check for DPLCs End
 		include	"_incObj/65 Waterfalls.asm"
 		include	"_anim/Waterfalls.asm"
 
+	if SuperMod
 		include "_incObj/8D Super Sonic Stars.asm"
+	endif
 
 	if (SpinDashEnabled|SkidDustEnabled)=1
 		include "_incObj/07 Effects.asm"	; Skid Dust and/or Spindash Dust
@@ -8151,7 +8153,10 @@ Map_RingBIN:
 		include	"_maps/LZ Conveyor.asm"
 		include	"_maps/Bubbles.asm"
 		include	"_maps/Waterfalls.asm"
+
+	if SuperMod
 		include	"_maps/Super Stars.asm"
+	endif
 
 		include	"_maps/Drowning Countdown.asm"
 		include	"_maps/Shield and Invincibility.asm"
