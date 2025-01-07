@@ -7313,10 +7313,10 @@ Eni_Title:	binclude	"tilemaps/Title Screen.eni" ; title screen foreground (mappi
 
 	if SaveProgressMod=1
 Nem_TitleFg:	binclude	"artnem/Title Screen Foreground (Menu).nem"
-		even
 	else
 Nem_TitleFg:	binclude	"artnem/Title Screen Foreground.nem"
 	endif
+		even
 
 
 Nem_TitleTM:	binclude	"artnem/Title Screen TM.nem"
