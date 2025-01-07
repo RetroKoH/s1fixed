@@ -147,7 +147,13 @@ ptr_EndSTH:				dc.l EndSTH
 ptr_CreditsText:		dc.l CreditsText
 ptr_EndEggman:			dc.l EndEggman
 ptr_TryChaos:			dc.l TryChaos
+
+	if SuperMod
 ptr_SuperStars:			dc.l SuperStars
+	else
+ptr_Obj8D:				dc.l NullObject
+	endif
+
 ptr_AfterImages:		dc.l AfterImages
 ptr_GogglesItem:		dc.l GogglesItem
 
@@ -300,6 +306,12 @@ id_EndSTH:				equ ((ptr_EndSTH-Obj_Index)/4)+1
 id_CreditsText:			equ ((ptr_CreditsText-Obj_Index)/4)+1
 id_EndEggman:			equ ((ptr_EndEggman-Obj_Index)/4)+1
 id_TryChaos:			equ ((ptr_TryChaos-Obj_Index)/4)+1
+
+	if SuperMod
 id_SuperStars:			equ ((ptr_SuperStars-Obj_Index)/4)+1
+	else
+id_Obj8D:				equ ((ptr_Obj8D-Obj_Index)/4)+1
+	endif
+
 id_AfterImages:			equ ((ptr_AfterImages-Obj_Index)/4)+1
 id_GogglesItem:			equ ((ptr_GogglesItem-Obj_Index)/4)+1
