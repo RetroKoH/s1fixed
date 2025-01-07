@@ -74,6 +74,7 @@ ptr_sndD9:	SMPS_SFX_METADATA	SoundD9, $70, 0
 ptr_sndDA:	SMPS_SFX_METADATA	SoundDA, $70, 0
 ptr_sndDB:	SMPS_SFX_METADATA	SoundDB, $70, 0
 ptr_sndDC:	SMPS_SFX_METADATA	SoundDC, $70, 0
+ptr_sndDD:	SMPS_SFX_METADATA	SoundDD, $70, 0
 ptr_sndend
 
 ; ---------------------------------------------------------------------------
@@ -201,3 +202,5 @@ SoundDB:	include	"sound/sfx/SndDB - Lightning Attack.asm"
 		even
 SoundDC:	include	"sound/sfx/SndDC - Drop Dash.asm"
 		even
+SoundDD:	include	"sound/sfx/SndDD - Perfect.asm"
+		even		

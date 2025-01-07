@@ -255,7 +255,7 @@ LevSelControls_CheckLR:
 		beq.s	.rts	; rts
 		move.w	(v_levselsound).w,d0
 		; temp. bandaid fix for crashes when playing these sounds in particular.
-        	cmpi.w  #$5D,d0
+        	cmpi.w  #$5E,d0
         	beq.s   .rts
         	cmpi.w  #$5F,d0
       		beq.s   .rts
