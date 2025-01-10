@@ -2361,15 +2361,14 @@ Level_MainLoop:
 		tst.b	(f_restart).w
 		bne.w	GM_Level
 		jsr		(RingsManager).l			; RetroKoH S3K Rings Manager
-		tst.w	(v_debuguse).w				; is debug mode being used?
-		bne.s	Level_DoScroll				; if yes, branch
-		cmpi.b	#6,(v_player+obRoutine).w	; has Sonic just died?
-		bhs.s	Level_SkipScroll			; if yes, branch
 
-Level_DoScroll:
+	if ~~ActiveDeathSequence				; RetroKoH Active Death Sequence Mod
+		cmpi.b	#6,(v_player+obRoutine).w	; has Sonic just died?
+		bhs.s	Level_SkipDeform			; if yes, branch
+	endif
 		bsr.w	DeformLayers
 
-Level_SkipScroll:
+Level_SkipDeform:
 	if HUDScrolling=1
 		cmpi.b	#128+16,(v_hudscrollpos).w
 		beq.s	Level_SkipHUDScroll
@@ -2492,6 +2491,11 @@ ColPointers:
 
 
 SynchroAnimate:
+
+	if ~~ActiveDeathSequence				; RetroKoH Active Death Sequence Mod
+		cmpi.b	#6,(v_player+obRoutine).w	; has Sonic just died?
+		bhs.s	SyncEnd						; if yes, branch
+	endif
 
 ; Used for GHZ spiked log
 Sync1:
@@ -5292,52 +5296,62 @@ Smash_FragSpd2:	dc.w -$600, -$600
 
 
 ExecuteObjects:
-		lea		(v_objspace).w,a0	; set address for object RAM
+		lea		(v_objspace).w,a0			; set address for object RAM
 		moveq	#v_allobjcount,d7
 		moveq	#0,d0
-	if ObjectsFreeze=1				; RetroKoH Object Freeze Mod
-		cmpi.b	#6,(v_player+obRoutine).w
-		bhs.s	loc_D362
+	if ~~ActiveDeathSequence				; RetroKoH Active Death Sequence Mod
+		cmpi.b	#6,(v_player+obRoutine).w	; has Sonic just died?
+		bhs.s	ObjectsDisplayOnly			; if yes, branch
 	endif
 
 loc_D348:
-		move.b	obID(a0),d0			; load object number from RAM
+		move.b	obID(a0),d0					; load object number from RAM
 		beq.s	loc_D358
 		add.w	d0,d0
 		add.w	d0,d0
 		movea.l	Obj_Index-4(pc,d0.w),a1
-		jsr		(a1)				; run the object's code
+		jsr		(a1)						; run the object's code
 		moveq	#0,d0
 
 loc_D358:
-		lea		object_size(a0),a0	; next object
+		lea		object_size(a0),a0			; next object
 		dbf		d7,loc_D348
 		rts	
 ; ===========================================================================
 
-loc_D362:
+; The following only runs if objects are meant to freeze when Sonic dies.
+	if ~~ActiveDeathSequence				; RetroKoH Active Death Sequence Mod
+ObjectsDisplayOnly:
 	; RHS Drowning Fix
-		cmpi.b	#$A,(v_player+obRoutine).w		; Has Sonic drowned?
-		beq.s	loc_D348						; If so, run objects a little longer
+		cmpi.b	#$A,(v_player+obRoutine).w	; Has Sonic drowned?
+		beq.s	loc_D348					; If so, run objects a little longer
 	; Drowning Fix End
-		moveq	#v_rsvobjcount,d7	; Run through reserved obj space (before level objects)
+		moveq	#v_rsvobjcount,d7			; Run through reserved obj space (before level objects)
 		bsr.s	loc_D348
-		moveq	#v_lvlobjcount,d7	; Run through level obj space
+		moveq	#v_lvlobjcount,d7			; Run through level obj space
 
 loc_D368:
-		moveq	#0,d0
-		move.b	obID(a0),d0
-		beq.s	loc_D378
-		tst.b	obRender(a0)
-		bpl.s	loc_D378
-		bsr.w	DisplaySprite
+		tst.b	obID(a0)					; get the object's ID
+		beq.s	loc_D378					; if there's no object, branch
+		tst.b	obRender(a0)				; was the object displayed on the previous frame?
+		bpl.s	loc_D378					; if not, skip it
+
+	; If this is a multi-sprite object, then we cannot use its 'priority'
+	; value to display it as it's being used for coordinate data.
+	; This fix is applied from s2disasm.
+		pea		loc_D378(pc)				; This is an optimisation to avoid the need for extra branches: it makes it so loc_D378 will be executed after a return
+		btst	#6,obRender(a0)				; Is this a multi-sprite object?
+		beq.w	DisplaySprite				; If not, display using the object's 'priority' value.
+		move.w	#priority4,d0				; If not, display using a hardcoded priority of 4.
+		bra.w	DisplaySprite2
 
 loc_D378:
 		lea		object_size(a0),a0
 
 loc_D37C:
 		dbf		d7,loc_D368
-		rts	
+		rts
+	endif
 ; End of function ExecuteObjects
 
 ; ===========================================================================

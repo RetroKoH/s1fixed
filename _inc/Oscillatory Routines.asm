@@ -42,7 +42,7 @@ OscillateNumInit:
 ; Oscillate values
 
 OscillateNumDo:
-	if ObjectsFreeze=1				; RetroKoH Object Freeze Mod
+	if ~~ActiveDeathSequence				; RetroKoH Active Death Sequence Mod
 		cmpi.b	#6,(v_player+obRoutine).w	; has Sonic just died?
 		bhs.s	.end						; if yes, branch
 	endif
