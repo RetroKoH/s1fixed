@@ -19,6 +19,7 @@ Debug_Main:	; Routine 0
 		andi.w	#$7FF,(v_player+obY).w
 		andi.w	#$7FF,(v_screenposy).w
 		andi.w	#$3FF,(v_bgscreenposy).w
+		move.b	#2,obRoutine(a0)					; get Sonic OUT of death routine to stop freezing effect (if active)
 		clr.b	obFrame(a0)
 		move.b	#aniID_Walk,obAnim(a0)
 
