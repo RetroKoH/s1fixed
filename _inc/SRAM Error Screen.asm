@@ -29,22 +29,29 @@ Splash_LoadText:
 		moveq	#0,d1
 		lea		TextData_ErrorHeading(pc),a1 ; where to fetch the lines from
 		move.l	#$41060003,4(a6)	; starting screen position 
+
+	; Set palette line based on menu style option
+	if NewLevelSelect
 		move.w	#$A680,d3	; which palette the font should use and where it is in VRAM
+	else
+		move.w	#$E680,d3	; which palette the font should use and where it is in VRAM
+	endif
+
 		moveq	#33,d2		; number of characters to be rendered in a line -1
 		bsr.w	ASCText_RenderLine
 
 		moveq	#0,d1
 		lea		TextData_ErrorBody(pc),a1 ; where to fetch the lines from
-		move.l	#$43060003,d4	; (CHANGE) starting screen position 
-		move.w	#$A680,d3	; which palette the font should use and where it is in VRAM
+		move.l	#$43060003,d4	; starting screen position 
+
 		moveq	#18,d1		; number of lines of text to be displayed -1
 
--
+.nextline:
 		move.l	d4,4(a6)
 		moveq	#33,d2		; number of characters to be rendered in a line -1
 		bsr.w	ASCText_RenderLine
 		addi.l	#(1*$800000),d4  ; replace number to the left with desired distance between each line
-		dbf	d1,-
+		dbf		d1,.nextline
 
 .loadpal:
 		moveq	#palid_LevelSel,d0
