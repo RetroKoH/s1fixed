@@ -356,9 +356,9 @@ GameInit:
 		clr.b	(SegaCD_Mode).w
 	endif
 
-		jsr 	(InitDMAQueue).l	; Flamewing Ultra DMA Queue
+		jsr 	(InitDMAQueue).l			; Flamewing Ultra DMA Queue
 		bsr.w	VDPSetupGame
-		bsr.w	DACDriverLoad ; Remove this call to old Sound Driver when adding MegaPCM2
+		bsr.w	DACDriverLoad				; Calls SMPS_LoadDACDriver in this version
 		bsr.w	JoypadInit
 		move.b	#id_Sega,(v_gamemode).w		; set Game Mode to Sega Screen
 
