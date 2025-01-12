@@ -181,7 +181,8 @@ v_jpadhold1:		ds.b	1		; joypad input - held
 v_jpadpress1:		ds.b	1		; joypad input - pressed
 				ds.b	6		; unused
 v_vdp_buffer1:		ds.w	1		; VDP instruction buffer
-				ds.b	6		; unused
+v_sram_errorcode:	ds.l	1		; SRAM error code
+				ds.b	2		; unused
 v_demolength:		ds.w	1		; the length of a demo in frames
 v_scrposy_vdp:		ds.w	1		; screen position y (VDP)
 v_bgscrposy_vdp:	ds.w	1		; background screen position y (VDP)
