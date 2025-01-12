@@ -31,7 +31,7 @@ Splash_LoadText:
 		move.l	#$41060003,4(a6)	; starting screen position 
 		move.w	#$A680,d3	; which palette the font should use and where it is in VRAM
 		moveq	#33,d2		; number of characters to be rendered in a line -1
-		bsr.w	GMSE_LineRender
+		bsr.w	ASCText_RenderLine
 
 		moveq	#0,d1
 		lea		TextData_ErrorBody(pc),a1 ; where to fetch the lines from
@@ -42,7 +42,7 @@ Splash_LoadText:
 -
 		move.l	d4,4(a6)
 		moveq	#33,d2		; number of characters to be rendered in a line -1
-		bsr.w	GMSE_LineRender
+		bsr.w	ASCText_RenderLine
 		addi.l	#(1*$800000),d4  ; replace number to the left with desired distance between each line
 		dbf	d1,-
 
@@ -72,52 +72,23 @@ TextData_ErrorHeading:
 		dc.b	"   WARNING - NO SRAM DETECTED!!   "
 		
 TextData_ErrorBody:
-		dc.b	"IT HAS BEEN DETECTED THAT SRAM,   "
-		dc.b	"AKA THE BATTERY BACKED SAVING     "
-		dc.b	"MECHANISM, ISN'T INITIALIZED.     "
+		dc.b	"IT HAS BEEN DETECTED THAT SRAM    "
+		dc.b	"(BATTERY BACKUP TO SAVE YOUR DATA)"
+		dc.b	"ISN'T INITIALIZED.                "
 		dc.b	"                                  "
 		dc.b	"THIS ROM HACK RELIES ON IT TO SAVE"
 		dc.b	"YOUR CURRENT PROGRESS. GIVEN THAT "
-		dc.b	"IT ISN'T LOADED PROPERLY, PROGRESS"
-		dc.b	"OR SETTINGS WILL NOT BE SAVED UPON"
+		dc.b	"IT'S NOT LOADED PROPERLY, PROGRESS"
+		dc.b	"AND DATA WILL NOT BE SAVED UPON   "
 		dc.b	"RESET.                            "
 		dc.b	"                                  "
-		dc.b	"PLEASE CHECK THE SETTINGS OF YOUR "
-		dc.b	"EMULATOR TO SEE IF SRAM IS ENABLED"
-		dc.b	"AND WORKING OR CHECK THE MANUAL OF"
-		dc.b	"YOUR FLASHCART TO SEE IF IT       "
+		dc.b	"PLEASE CHECK YOUR EMULATOR'S      "
+		dc.b	"SETTINGS TO SEE IF SRAM IS ENABLED"
+		dc.b	"AND WORKING, OR CHECK THE MANUAL  "
+		dc.b	"OF YOUR FLASHCART TO SEE IF IT    "
 		dc.b	"SUPPORTS SRAM.                    "
 		dc.b	"                                  "
 		dc.b	"           0123456789             "
 		dc.b	"                                  "
 		dc.b	"     PRESS START TO CONTINUE      "
 ; ===========================================================================
-
-; ===========================================================================
-; Subroutine that renders one line of ASCII text.
-; Taken from the ASCII S1 Level Select Screen.
-; ===========================================================================	
-	
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-GMSE_LineRender:
-GMSE_LineLoop:
-		moveq	#0,d0
-		move.b	(a1)+,d0			; get character
-		bpl.s	GMSE_CharOk			; branch if valid
-		move.w	#0,(a6)				; use blank character
-		dbf		d2,GMSE_LineLoop
-		rts	
-; ===========================================================================
-
-GMSE_CharOk:			; XREF: GMSE_LineLoop
-		cmp.w	#$40,d0		; Check for $40 (End of ASCII number area)
-		blt.s	.notText	; If this is not an ASCII text character, branch
-		subq.w	#3,d0		; Subtract an extra 3 (Compensate for missing characters in the font)
-    .notText:
-		sub.w	#$30,d0		; Subtract #$33
-		add.w	d3,d0		; combine char with VRAM setting
-		move.w	d0,(a6)		; send to VRAM
-		dbf		d2,GMSE_LineLoop  
-		rts
-; End of function GMSE_LineLoop
