@@ -4416,8 +4416,6 @@ locret_6C1E:
 		rts	
 ; End of function GetBlockData
 
-		include	"_incObj/sub AnimateSprite.asm"		; Moved here to make every jmp use ().w address mode
-
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
