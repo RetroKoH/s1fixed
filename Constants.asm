@@ -71,6 +71,10 @@ id_Credits:		equ ptr_GM_Credits-GameModeArray	; $1C
 id_MenuScreen:	equ ptr_GM_MenuScreen-GameModeArray	; $20
 	endif
 
+	if SaveProgressMod
+id_SRAMError:	equ ptr_GM_SRAMError-GameModeArray	; ($20/$24)
+	endif
+
 ; Levels
 id_GHZ:		equ 0
 id_LZ:		equ 1
