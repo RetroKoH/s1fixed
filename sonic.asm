@@ -1690,7 +1690,7 @@ Sega_WaitEnd:
 Sega_GotoTitle:
 		tst.b	(v_sram_errorcode).w
 		bne.s	.nosram
-		move.b	#id_SRAMError,(v_gamemode).w		; go to title screen
+		move.b	#id_Title,(v_gamemode).w		; go to title screen
 		rts
 
 .nosram:

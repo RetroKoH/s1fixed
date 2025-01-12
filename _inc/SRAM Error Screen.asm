@@ -1,5 +1,6 @@
 ; ---------------------------------------------------------------------------
 ; SRAM Error screen
+; Based on the SRAM Error Screen from Super Challenges
 ; ---------------------------------------------------------------------------
 
 GM_SRAMError:
@@ -16,15 +17,15 @@ GM_SRAMError:
 		clr.b	(f_wtr_state).w
 		bsr.w	ClearScreen
 
-; load menutext and tilemap with our disclaimer
+; load ment text font
 		lea		(vdp_data_port).l,a6
 		locVRAM	ArtTile_Level_Select_Font*tile_size,4(a6)
 		lea		(Art_Text).l,a5	; load level select font
 		move.w	#(Art_Text_End-Art_Text)/2-1,d1
 
-Splash_LoadText:
+.loadfont:
 		move.w	(a5)+,(a6)
-		dbf		d1,Splash_LoadText	; load level select font
+		dbf		d1,.loadfont	; load level select font
 
 		moveq	#0,d1
 		lea		TextData_ErrorHeading(pc),a1 ; where to fetch the lines from
@@ -55,24 +56,27 @@ Splash_LoadText:
 
 .loadpal:
 		moveq	#palid_LevelSel,d0
-		bsr.w	PalLoad	; load level select palette
+		bsr.w	PalLoad_Fade	; load level select palette
 
-	; could play music here
-		move.b	#$14,(v_vbla_routine).w
+		move.b	#$16,(v_vbla_routine).w
 		bsr.w	WaitForVBla
-		move.w	#180,(v_demolength).w
+		move.w	(v_vdp_buffer1).w,d0
+		ori.b	#$40,d0
+		move.w	d0,(vdp_control_port).l
+		bsr.w	PaletteFadeIn
 
-Splash_WaitEnd:
-		move.b	#2,(v_vbla_routine).w
+SRAMError_Main:
+		move.b	#$16,(v_vbla_routine).w
 		bsr.w	WaitForVBla
-		tst.w	(v_demolength).w
-		beq.s	Splash_GotoTitle
-		andi.b	#btnStart,(v_jpadpress1).w ; is Start button pressed?
-		beq.s	Splash_WaitEnd	; if not, branch
 
-Splash_GotoTitle:
-		move.b	#id_Title,(v_gamemode).w ; go to title screen
-		rts	
+		move.b	(v_jpadpress1).w,d0 ; fetch commands
+		andi.b	#btnStart,d0
+		beq.s	SRAMError_Main
+
+        move.b	#id_Title,(v_gamemode).w ; => Title Screen		
+		rts
+
+		bra.s	SRAMError_Main	
 ; ===========================================================================
 
 TextData_ErrorHeading:
