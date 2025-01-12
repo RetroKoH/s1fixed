@@ -1868,6 +1868,8 @@ Tit_LoadText:
 		include "_inc/Level Select (S1).asm"
 	endif
 
+		include "_inc/ASCII Render Text.asm"
+
 PlayLevel:
 		move.b	#id_Level,(v_gamemode).w	; set screen mode to $0C (level)
 		bsr.s	ResetLevel					; Reset level variables
@@ -7512,7 +7514,7 @@ Art_TimeOver_End:	even
 
 
 ; We only need to add an 'align $20000' at any point where art that is used by DPLCs crosses a 128k boundary
-;	align $20000
+	align $20000
 Art_TitleSonic:	binclude	"artunc/Title Screen Sonic.bin"		; Title Sonic -- RetroKoH VRAM Overhaul
 		even
 
