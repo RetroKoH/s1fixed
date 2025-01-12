@@ -234,14 +234,15 @@ textpos:	= ($40000000+(($E210&$3FFF)<<16)+(($E210&$C000)>>14))
 
 		lea		(LevelMenuText).l,a1
 		lea		(vdp_data_port).l,a6
-		move.l	#textpos,d4	; text position on screen
-		move.w	#$E680,d3	; VRAM setting (4th palette, $680th tile)
-		moveq	#$14,d1		; number of lines of text
+		move.l	#textpos,d4			; text position on screen
+		move.w	#$E680,d3			; VRAM setting (4th palette, $680th tile)
+		moveq	#20,d1				; number of lines of text - 1
 
 LevSel_DrawAll:
 		move.l	d4,4(a6)
-		bsr.w	LevSel_ChgLine	; draw line of text
-		addi.l	#$800000,d4	; jump to next line
+		moveq	#23,d2				; number of characters per line - 1
+		bsr.w	ASCText_RenderLine	; draw line of text
+		addi.l	#$800000,d4			; jump to next line
 		dbf		d1,LevSel_DrawAll
 
 		moveq	#0,d0
@@ -257,9 +258,10 @@ LevSel_DrawAll:
 		add.w	d1,d1
 		add.w	d0,d1
 		adda.w	d1,a1
-		move.w	#$C680,d3		; VRAM setting (3rd palette, $680th tile)
+		move.w	#$C680,d3			; VRAM setting (3rd palette, $680th tile)
 		move.l	d4,4(a6)
-		bsr.w	LevSel_ChgLine	; recolour selected line
+		moveq	#23,d2				; number of characters per line - 1
+		bsr.w	ASCText_RenderLine	; recolour selected line
 		move.w	#$E680,d3
 		cmpi.w	#$14,(v_levselitem).w
 		bne.s	LevSel_DrawSnd
@@ -284,43 +286,16 @@ LevSel_ChgSnd:
 		andi.w	#$F,d0
 		cmpi.b	#$A,d0		; is digit $A-$F?
 		blo.s	LevSel_Numb	; if not, branch
-		addq.b	#4,d0		; use alpha characters (was 7) -- Soulless Sentinel Level Select ASCII Mod
+		addq.b	#7,d0		; use alpha characters -- Soulless Sentinel Level Select ASCII Mod
 
 LevSel_Numb:
+		addi.b	#$F,d0		; ASCII font offset (brings us to digits)
 		add.w	d3,d0
 		move.w	d0,(a6)
 		rts	
 ; End of function LevSel_ChgSnd
-
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-LevSel_ChgLine:
-		moveq	#$17,d2			; number of characters per line
-
-LevSel_LineLoop:
-		moveq	#0,d0
-		move.b	(a1)+,d0		; get character
-		bpl.s	LevSel_CharOk	; branch if valid
-		move.w	#0,(a6)			; use blank character
-		dbf		d2,LevSel_LineLoop
-		rts	
-
-; Soulless Sentinel Level Select ASCII Mod
-LevSel_CharOk:
-		cmpi.w	#$40,d0		; Check for $40 (End of ASCII number area)
-		blt.s	.notText	; If this is not an ASCII text character, branch
-		subq.w	#3,d0		; Subtract an extra 3 (Compensate for missing characters in the font)
-.notText:
-		subi.w	#$30,d0		; Subtract #$33 (Convert to S2 font from ASCII)
-		add.w	d3,d0		; combine char with VRAM setting
-		move.w	d0,(a6)		; send to VRAM
-		dbf		d2,LevSel_LineLoop
-		rts
-; End of function LevSel_ChgLine
-
 ; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Level	select menu text -- Soulless Sentinel Level Select ASCII Mod
 ; ---------------------------------------------------------------------------
