@@ -342,42 +342,77 @@ GameInit:
 		move.w	#(v_crossresetram-v_ram_start)/4-1,d6
 .clearRAM:
 		move.l	d7,(a6)+
-		dbf	d6,.clearRAM	; clear RAM ($0000-$FDFF)
+		dbf	d6,.clearRAM					; clear RAM ($0000-$FDFF)
 
-		jsr 	(InitDMAQueue).l		; Flamewing Ultra DMA Queue
+		jsr 	(InitDMAQueue).l			; Flamewing Ultra DMA Queue
 		bsr.w	VDPSetupGame
 		bsr.w	DACDriverLoad
 		bsr.w	JoypadInit
-		move.b	#id_Sega,(v_gamemode).w	; set Game Mode to Sega Screen
+		move.b	#id_Sega,(v_gamemode).w		; set Game Mode to Sega Screen
 
 	if SaveProgressMod=1
 InitSRAM:
-		move.b  #1,(sram_port).l	; Enable SRAM writing
-
+		clr.b	(v_sram_errorcode).w		; Clear the SRAM error code
+		gotoSRAM							; Enable SRAM writing
 	if AddressSRAM=3
 		; no need to change this by yourself anymore -- Starleaf
-		lea 	($200001).l,a0		; Load SRAM memory into a0
+		lea 	($200001).l,a0				; Load SRAM memory into a0
 	else
-		lea		($200000).l,a0		; Load SRAM memory into a0
+		lea		($200000).l,a0				; Load SRAM memory into a0
 	endif
 
-		movep.l 0(a0),d0			; Get the existing string at the start of SRAM
-		move.l  #"SRAM",d1			; Write the string "SRAM" to d1
-		cmp.l   d0,d1				; Was it already in SRAM?
-		beq.s   .skip				; If so, skip
-		movep.l d1,0(a0)			; Write string "SRAM"
-		; Here is where you initialize values like lives or level. If you're using 8 bit values, you can only use every other byte.
-		; Example - 8(a0) => $A(a0)
+		; Check for SRAM signature
+		movep.l 0(a0),d0					; Get the existing string at the start of SRAM
+		move.l  #"SRAM",d1					; Load "SRAM" signature
+		cmp.l   d0,d1						; Compare with existing data
+		beq.s   .skip						; If it matches, skip initialization
+
+		; Write and verify "SRAM" signature
+		movep.l d1,0(a0)					; Write string "SRAM"
+		movep.l 0(a0),d0					; Read back for verification
+		cmp.l   d0,d1						; Compare written value
+		bne.s   .errorHandler				; Branch if verification failed
 
 	.skip:
-        move.b	#0,(sram_port).l			; Disable SRAM writing
+		; Here is where you initialize values like lives or level.
+		; If you're using word or long values, you can only use every other byte.
+		; Example - 8(a0) => $A(a0)
+		lea		8(a0),a0					; Base of usable SRAM
+
+		; Check for save data initialization
+		cmpi.b	#1,sram_init(a0)			; Check initialization flag
+		bne.s	.newData					; If not initialized, branch to set up
+		bra.s	.stopsram					; If save data exists, skip initialization
+
+	.errorHandler:
+		move.b	#1,(v_sram_errorcode).w		; Set error code
+
+	.newData:
+		moveq	#0,d0						; Clear default values
+		move.b	#1,sram_init(a0)			; Mark SRAM initialized
+		movep.w	d0,sram_zone(a0)			; clear saved zone and act
+		movep.l	d0,sram_score(a0)			; clear saved score
+		move.b	d0,sram_lastspecial(a0)		; clear saved special stage number
+		movep.w	d0,sram_emeralds(a0)		; clear saved emerald count and bitfield
+		move.b	d0,sram_continues(a0)		; clear saved continues
+		move.b	#3,sram_lives(a0)			; reset saved lives count
+		move.l	#5000,d0
+		movep.l	d0,sram_scorelife(a0)		; reset saved extra life target score
+;		bra.s	.finishsram
+
+	.stopsram:
+		; **load data such as options/settings here**
+
+;	.finishsram:
+        gotoROM								; Disable SRAM writing
+;		bra.s	MainGameLoop				; Continue to main loop
 	endif
 
 MainGameLoop:
 		moveq	#0,d0						; clear d0 before using it w/ the new Game Mode system to avoid bugs
 		move.b	(v_gamemode).w,d0			; load Game Mode
-	if NewLevelSelect
-		cmpi.b	#$20,d0						; limit Game Mode value to $20 max
+	if (NewLevelSelect|SaveProgressMod)
+		cmpi.b	#$24,d0						; limit Game Mode value to $24 max
 		ble.s	.dontcap
 		clr.b	d0
 	.dontcap:
@@ -405,6 +440,10 @@ ptr_GM_Credits:		dc.l	GM_Credits		; Credits ($1C)
 
 	if NewLevelSelect
 ptr_GM_MenuScreen:	dc.l	GM_MenuScreen	; NEW Sonic 2 style Level Select ($20)
+	endif
+
+	if SaveProgressMod
+ptr_GM_SRAMError:	dc.l	GM_SRAMError	; SRAM Error Screen ($20/$24)
 	endif
 ; ===========================================================================
 
@@ -1647,10 +1686,25 @@ Sega_WaitEnd:
 		andi.b	#btnStart,(v_jpadpress1).w		; is Start button pressed?
 		beq.s	Sega_WaitEnd					; if not, branch
 
+	if SaveProgressMod
+Sega_GotoTitle:
+		tst.b	(v_sram_errorcode).w
+		bne.s	.nosram
+		move.b	#id_SRAMError,(v_gamemode).w		; go to title screen
+		rts
+
+.nosram:
+		move.b	#id_SRAMError,(v_gamemode).w	; go to error screen
+		rts
+; ===========================================================================
+
+		include "_inc/SRAM Error Screen.asm"
+	else
 Sega_GotoTitle:
 		move.b	#id_Title,(v_gamemode).w		; go to title screen
-		rts	
+		rts
 ; ===========================================================================
+	endif
 
 ; ---------------------------------------------------------------------------
 ; Title	screen
@@ -1831,11 +1885,16 @@ PlayLevel:
 		tst.b	(f_levsel_active).w
 		bne.s	.nosaving
 
-		move.b	#1,(sram_port).l			; enable SRAM (required)
-		lea		($200009).l,a1				; base of SRAM + 9 (01-07 for init SRAM)
+		gotoSRAM							; Enable SRAM writing
+	if AddressSRAM=3
+		; no need to change this by yourself anymore -- Starleaf
+		lea 	($200009).l,a1				; Base of usable SRAM
+	else
+		lea		($200008).l,a1				; Base of usable SRAM
+	endif
 
 	; reset stored values (cannot do directly) -- d0 was zeroed out in ResetLevel
-		move.b	#1,sram_init(a1) 		; init new game
+		move.b	#1,sram_init(a1) 		; init SRAM data
 		movep.w	d0,sram_zone(a1)		; clear saved zone and act
 		movep.l	d0,sram_score(a1)		; clear saved score
 		move.b	d0,sram_lastspecial(a1)	; clear saved special stage number
@@ -1847,7 +1906,7 @@ PlayLevel:
 		move.l	(v_scorelife).w,d0
 		movep.l	d0,sram_scorelife(a1)	; reset saved extra life target score
 	
-		move.b	d0,(sram_port).l		; disable SRAM (required)
+		move.b	d0,(sram_port).l		; Disable SRAM writing
 
 	.nosaving:
 	endif
@@ -1877,15 +1936,14 @@ ResetLevel:
 
 	if SaveProgressMod=1
 PlayLevel_Load:
-		move.b	#1,(sram_port).l			; enable SRAM (required)
-		lea		($200009).l,a1				; base of SRAM + 9 (01-07 for init SRAM)
-		move.b	sram_init(a1),d0	
-		move.b	#0,(sram_port).l			; disable SRAM (required)
-		
-		cmpi.b	#1,d0
-		bne.w	PlayLevel					; if no save game exists, start a new one
-		
-		move.b	#1,(sram_port).l			; enable SRAM (required)
+		gotoSRAM							; Enable SRAM writing
+	if AddressSRAM=3
+		; no need to change this by yourself anymore -- Starleaf
+		lea 	($200009).l,a1				; Base of usable SRAM
+	else
+		lea		($200008).l,a1				; Base of usable SRAM
+	endif
+
 		movep.w	sram_zone(a1),d0
 		move.w	d0,(v_zone).w				; load saved zone and act
 		move.b	sram_lives(a1),d0
@@ -1902,7 +1960,7 @@ PlayLevel_Load:
 		move.b	d0,(v_continues).w			; load continues
 		
 		moveq	#0,d0
-		move.b	d0,(sram_port).l			; disable SRAM (required)
+		move.b	d0,(sram_port).l			; Disable SRAM writing
 
 	; everything else can be reset like normal
 		move.w	d0,(v_rings).w				; clear rings
@@ -2013,8 +2071,15 @@ Level_NoMusicFade:
 		bne.s	.noSRAM						; if not, branch
 		tst.b	(f_levsel_active).w
 		bne.s	.noSRAM
-		move.b	#1,(sram_port).l			; enable SRAM (required)
-		lea		($200009).l,a1				; base of usable SRAM + 1
+
+		gotoSRAM							; Enable SRAM writing
+	if AddressSRAM=3
+		; no need to change this by yourself anymore -- Starleaf
+		lea 	($200009).l,a1				; Base of usable SRAM
+	else
+		lea		($200008).l,a1				; Base of usable SRAM
+	endif
+
 		move.w	(v_zone).w,d0				; move zone and act number to d0 (we can't do it directly)
 		movep.w	d0,sram_zone(a1)			; save zone and act to SRAM	
 		move.b	(v_lives).w,d0
@@ -2030,7 +2095,7 @@ Level_NoMusicFade:
 		move.b	(v_continues).w,d0
 		move.b	d0,sram_continues(a1)
 
-		move.b	#0,(sram_port).l			; disable SRAM (required)
+        gotoROM								; Disable SRAM writing
 
 	.noSRAM:
 	endif
@@ -3761,6 +3826,7 @@ Demo_EndGHZ2:	binclude	"demodata/Ending - GHZ2.bin"
 
 		include	"_inc/LevelSizeLoad & BgScrollSpeed.asm"
 		include	"_inc/DeformLayers.asm"
+		include	"_incObj/sub AnimateSprite.asm"		; Moved here to make every jmp use ().w address mode
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -4385,9 +4451,6 @@ Calc_VRAM_Pos_2:
 		move.w	d4,d0
 		rts	
 ; End of function Calc_VRAM_Pos
-
-
-		include	"_incObj/sub AnimateSprite.asm"		; Moved here to make every jmp use ().w address mode
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to	load tiles as soon as the level	appears
@@ -7322,6 +7385,10 @@ Nem_SegaLogo:	binclude	"artnem/Sega Logo.nem" ; large Sega logo
 Eni_SegaLogo:	binclude	"tilemaps/Sega Logo.eni" ; large Sega logo (mappings)
 			even
 
+	if SaveProgressMod
+Eni_SRAMErrorScreen:	binclude	"tilemaps/SRAM Error Screen.eni" ; Error Screen text
+			even
+	endif
 
 	if ChunksInROM=1	;Mercury Chunks In ROM
 Eni_Title:	binclude	"tilemaps_u/Title Screen.bin" ; title screen foreground (mappings)
