@@ -41,7 +41,7 @@ LevelSelect:
 		beq.s	LevelSelect							; if not, branch
 		move.w	(v_levselitem).w,d0
 		cmpi.w	#$14,d0								; have you selected item $14 (sound test)?
-		bne.s	LevSel_Level						; if not, go to	Level/SS subroutine
+		bne.w	LevSel_Level						; if not, go to	Level/SS subroutine
 		move.w	(v_levselsound).w,d0
 		addi.w	#$80,d0
 		tst.b	(f_creditscheat).w					; is Japanese Credits cheat on?
@@ -54,11 +54,11 @@ LevelSelect:
 ; Error check removed following bugfix
 LevSel_PlaySnd:
 		cmpi.w	#mus__End+1,d0				; is music being played?
-		blo.s	LevSel_PlaySnd				; if yes, branch
+		blo.s	.playmus					; if yes, branch
 		cmpi.w	#sfx__First,d0
 		blo.s	LevelSelect					; if yes, branch
 
-LevSel_PlaySnd:
+.playmus:
 		lea	(PlaySound).w,a1				; play music
 
 		cmpi.w	#mus__End,d0				; is sfx being played?
@@ -67,7 +67,7 @@ LevSel_PlaySnd:
 
 		lea	(PlaySound_Special).w,a1		; play sfx
 
-.play
+.play:
 		jsr		(a1)
 		bra.s	LevelSelect
 ; ===========================================================================
