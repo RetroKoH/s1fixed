@@ -7382,11 +7382,6 @@ Nem_SegaLogo:	binclude	"artnem/Sega Logo.nem" ; large Sega logo
 Eni_SegaLogo:	binclude	"tilemaps/Sega Logo.eni" ; large Sega logo (mappings)
 			even
 
-	if SaveProgressMod
-Eni_SRAMErrorScreen:	binclude	"tilemaps/SRAM Error Screen.eni" ; Error Screen text
-			even
-	endif
-
 	if ChunksInROM=1	;Mercury Chunks In ROM
 Eni_Title:	binclude	"tilemaps_u/Title Screen.bin" ; title screen foreground (mappings)
 		even

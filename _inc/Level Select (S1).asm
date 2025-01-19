@@ -271,9 +271,9 @@ LevSel_DrawSnd:
 		move.w	(v_levselsound).w,d0
 		move.b	d0,d2
 		lsr.b	#4,d0
-		bsr.w	LevSel_ChgSnd			; draw 1st digit
+		bsr.s	LevSel_ChgSnd			; draw 1st digit
 		move.b	d2,d0
-		bra.w	LevSel_ChgSnd			; draw 2nd digit
+										; fallthrough -- draw 2nd digit
 ; End of function LevSelTextLoad
 
 
