@@ -1,6 +1,9 @@
 ; RNG by Devon; Adapted to current mods by RetroKoH
 MonitorRandomizer:
 
+		move.l	(v_vbla_count).w,d1	; put number of frames in randomizer
+		swap	d1
+		move.l	d1,(v_random).w
 		jsr		(RandomNumber).w	; call for random number
 
 	if ShieldsMode
