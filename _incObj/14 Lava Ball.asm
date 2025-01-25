@@ -61,7 +61,7 @@ LBall_Action:	; Routine 2
 		jsr		LBall_TypeIndex(pc,d1.w)
 		bsr.w	SpeedToPos
 		lea		Ani_Fire(pc),a1
-		bsr.w	AnimateSprite
+		jsr		(AnimateSprite).w
 
 LBall_ChkDel:
 		offscreen.w	DeleteObject	; ProjectFM S3K Object Manager

@@ -2273,6 +2273,7 @@ Level_SkipTtlCard:
 		jsr		(LoadUncArt).w
 	endif
 
+		bsr.w	LoadRingFrame					; DeltaW/Malachi Optimized Rings
 		moveq	#palid_Sonic,d0
 		bsr.w	PalLoad_Fade					; load Sonic's palette
 		jsr		(AnimateLevelGfx_Init).l
@@ -2547,6 +2548,51 @@ ColPointers:
 		zonewarning ColPointers,8
 ;		dc.l Col_GHZ_1 ; Pointers for Ending are missing by default.
 ;		dc.l Col_GHZ_2
+; ===========================================================================
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Queue ring frame graphics loading
+; ---------------------------------------------------------------------------
+LoadRingFrame:
+		moveq	#0,d1				; Get ring frame offset for regular rings
+		move.b	(v_ani1_frame).w,d1
+		cmp.b	(v_DPLCframe1_buf).w,d1
+		beq.s	.chklostrings
+		move.b	d1,(v_DPLCframe1_buf).w
+		lsl.w	#7,d1				; Each ring frame takes $80 bytes, so multiply by $80
+		add.l	#Art_Ring,d1		; Queue a DMA transfer for this ring frame
+		move.w	#(ArtTile_Ring*tile_size),d2
+		move.w  #$80/2,d3
+		jsr		(QueueDMATransfer).w
+
+	.chklostrings:
+		moveq   #0,d1				; Get ring frame offset for lost rings
+		move.b  (v_ani3_frame).w,d1
+		cmp.b	(v_DPLCframe2_buf).w,d1
+		beq.s	RingFrame_End
+		move.b	d1,(v_DPLCframe2_buf).w
+		lsl.w   #7,d1				; Each ring frame takes $80 bytes, so multiply by $80
+		add.l   #Art_Ring,d1		; Queue a DMA transfer for this ring frame
+		move.w  #(ArtTile_LostRing*tile_size),d2
+		move.w  #$80/2,d3
+		jmp		(QueueDMATransfer).w
+
+RingFrame_End:
+		rts
+
+LoadSSRingFrame:
+		moveq	#0,d1				; Get ring frame offset for rings
+		move.b	(v_ani1_frame).w,d1
+		cmp.b	(v_DPLCframe1_buf).w,d1
+		beq.s	RingFrame_End
+		move.b	d1,(v_DPLCframe1_buf).w
+		lsl.w	#7,d1				; Each ring frame takes $80 bytes, so multiply by $80
+		add.l	#Art_Ring,d1		; Queue a DMA transfer for this ring frame
+		move.w	#(ArtTile_SS_Ring*tile_size),d2
+		move.w  #$80/2,d3
+		jmp		(QueueDMATransfer).w
+; ===========================================================================
 
 		include	"_inc/Oscillatory Routines.asm"
 
@@ -2593,18 +2639,19 @@ Sync3:
 ; Used for bouncing rings and rings in the special stage -- RetroKoH 8-Frame Rings Change
 Sync4:
 		tst.b	(v_ani3_time).w
-		beq.s	SyncEnd
+		beq.w	LoadRingFrame
 		moveq	#0,d0
 		move.b	(v_ani3_time).w,d0
 		add.w	(v_ani3_buf).w,d0
 		move.w	d0,(v_ani3_buf).w
-		rol.w	#7,d0
+		rol.w	#8,d0
 		andi.w	#7,d0
 		move.b	d0,(v_ani3_frame).w
 		subq.b	#1,(v_ani3_time).w
+		bra.w	LoadRingFrame
 
 SyncEnd:
-		rts	
+		rts
 ; End of function SynchroAnimate
 
 ; ---------------------------------------------------------------------------
@@ -2671,6 +2718,8 @@ GM_Special:
 		bsr.w	SS_BGLoad
 		moveq	#plcid_SpecialStage,d0
 		bsr.w	QuickPLC	; load special stage patterns
+		
+		bsr.w	LoadSSRingFrame
 
 		clearRAM v_objspace
 		clearRAM v_levelvariables
@@ -2755,6 +2804,8 @@ SS_MainLoop:
 		bsr.w	MoveSonicInDemo
 		move.w	(v_jpadhold1).w,(v_jpadhold2).w
 		jsr		(ExecuteObjects).l
+
+		bsr.w	LoadSSRingFrame
 
 	if (HUDInSpecialStage=1&HUDScrolling=1)
 		tst.b	(f_timecount).w
@@ -3789,8 +3840,7 @@ TryAg_MainLoop:
 
 TryAg_Exit:
 		move.b	#id_Sega,(v_gamemode).w ; goto Sega screen
-		rts	
-
+		rts
 ; ===========================================================================
 
 		include	"_incObj/8B Try Again & End Eggman.asm"
@@ -3816,10 +3866,13 @@ Demo_EndSBZ2:	binclude	"demodata/Ending - SBZ2.bin"
 		even
 Demo_EndGHZ2:	binclude	"demodata/Ending - GHZ2.bin"
 		even
+; ===========================================================================
+
+		include	"_incObj/sub AnimateSprite.asm"		; Moved here to make every jmp use ().w address mode
 
 		include	"_inc/LevelSizeLoad & BgScrollSpeed.asm"
 		include	"_inc/DeformLayers.asm"
-		include	"_incObj/sub AnimateSprite.asm"		; Moved here to make every jmp use ().w address mode
+
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -6716,9 +6769,9 @@ loc_1B2A4:
 		move.b	#3,(v_ani1_time).w		; Smooth Rings
 		addq.b	#1,(v_ani1_frame).w
 		andi.b	#7,(v_ani1_frame).w		; Smooth Rings
+	; $1D0(a1) no longer gets set. We only use one frame for spinning rings (LoadSSRingFrame).
 
 loc_1B2C8:
-		move.b	(v_ani1_frame).w,$1D0(a1)
 		subq.b	#1,(v_ani2_time).w
 		bpl.s	loc_1B2E4
 		move.b	#7,(v_ani2_time).w
@@ -7756,7 +7809,10 @@ Nem_Hud:		binclude	"artnem/HUD.nem"	; HUD (rings, time, score)
 		even
 Nem_Lives:		binclude	"artnem/HUD - Life Counter Icon.nem"
 		even
-Nem_Ring:		binclude	"artnem/Rings.nem"
+
+Art_Ring:		binclude	"artunc/Rings.bin"
+		even
+Nem_Sparkles:	binclude	"artnem/Ring Sparkles.nem"
 		even
 
 	if ShieldsMode
@@ -8098,12 +8154,7 @@ Art_SbzSmoke:	binclude	"artunc/SBZ Background Smoke.bin"
 		include	"_maps/Crabmeat.asm"
 		include	"_maps/Buzz Bomber.asm"
 		include	"_maps/Buzz Bomber Missile.asm"
-		include	"_maps/Rings.asm"		; THESE normal mappings are for debug rings, lost rings, and SS rings
-
-Map_RingBIN:
-		binclude	"_maps/Rings.bin"	; RetroKoH S3K Rings Manager
-		even
-
+		include	"_maps/Rings.asm"		; debug rings, lost rings, and SS rings
 		include	"_maps/Giant Ring.asm"	; Now includes the ring flash
 
 ; Split these into seperate files so SonLVL can render monitors properly	

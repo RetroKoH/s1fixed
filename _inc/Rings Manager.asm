@@ -5,7 +5,6 @@
 ; Taken from Sonic 2; Upgraded to S3K equivalent
 ; ----------------------------------------------------------------------------
 
-; loc_16F88:
 RingsManager:
 	; LavaGaming Object Routine Optimization
 		tst.b	(v_ringsroutine).w
@@ -60,7 +59,7 @@ RM_Next:
 		bne.s	.RM_3132B4					; if it's not 0 yet, branch
 		move.b	#6,(a1)						; reset timer
 		addq.b	#1,1(a1)					; increment frame
-		cmpi.b	#$C,1(a1)					; is it destruction time yet? - 8 frame rings. (Caverns4 / IkeyIlex)
+		cmpi.b	#5,1(a1)					; is it destruction time yet? - Optimized rings (DeltaW/Malachi)
 		bne.s	.RM_3132B4					; if not, branch
 		move.w	#-1,(a1)					; destroy ring
 		clr.w	-2(a2)						; clear ring entry
@@ -124,7 +123,6 @@ RM_Next:
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
-; loc_170BA:
 Touch_Rings:
 		cmpi.b	#90,obInvuln(a0)			; is Sonic too early in invuln frames to collect rings? -- RetroKoH Sonic SST Compaction
 		bhs.w	Touch_Rings_Done			; if so, return
@@ -204,7 +202,7 @@ Touch_Rings_Loop:
 	endif
 
 Touch_DestroyRing:
-		move.w	#$608,(a4)		; set frame and destruction timer - $608 instead of $604 for 8-frame rings
+		move.w	#$601,(a4)					; set frame and destruction timer - $601 instead of $604 for optimal rings
 
 	if PerfectBonusEnabled
 		subq.w	#1,(v_perfectringsleft).w
@@ -219,14 +217,12 @@ Touch_DestroyRing:
 		move.w	a4,-(a3)					; set ring address
 		addq.w	#1,(v_ringconsumedata).w	; increase count
 
-; loc_1715C:
 Touch_NextRing:
 		addq.w	#4,a1
 		addq.w	#2,a4
-		cmpa.l	a1,a2				; are we at the last ring for this area?
-		bne.s	Touch_Rings_Loop	; if not, branch
+		cmpa.l	a1,a2						; are we at the last ring for this area?
+		bne.s	Touch_Rings_Loop			; if not, branch
 
-; return_17166:
 Touch_Rings_Done:
 		rts
 ; ---------------------------------------------------------------------------
@@ -253,26 +249,25 @@ Touch_Ring_AttractRing:
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to draw on-screen rings
+; Partial adaptation of optimizations by Malachi
 ; ---------------------------------------------------------------------------
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
-; loc_17178:
+BuildRings_QuickExit:
+		rts
+
 BuildRings:
 		movea.l	(v_ringstart_addr_ROM).w,a0
 		move.l	(v_ringend_addr_ROM).w,d7
 		sub.l	a0,d7							; are there any rings on-screen?
-		bne.s	.BR_2							; if there are, branch
-		rts										; otherwise, return
-
-.BR_2:
+		beq.s	BuildRings_QuickExit			; if there aren't, branch and return
 		movea.w	(v_ringstart_addr_RAM).w,a4		; load start address
 		lea		(v_screenposx).w,a3				; load camera x position
 
-; loc_1718A:
-BuildRings_Loop:
-		tst.w	(a4)+				; has this ring been consumed?
-		bmi.w	BuildRings_NextRing	; if it has, branch
+	.loop:
+		move.w	(a4)+,d1			; has this ring been consumed? (Store frame value)
+		bmi.s	.noren				; if it has, branch
 		move.w	(a0),d3				; get ring X pos
 		sub.w	(a3),d3				; subtract camera X pos
 		addi.w	#128,d3				; screen top is 128x128 not 0x0
@@ -280,40 +275,53 @@ BuildRings_Loop:
 		sub.w	4(a3),d2			; subtract camera Y pos
 		andi.w	#$7FF,d2
 		addi.w	#8,d2
-		bmi.s	BuildRings_NextRing	; dunno how this check is supposed to work
+		bmi.s	.noren				; dunno how this check is supposed to work
 		cmpi.w	#240,d2
-		bge.s	BuildRings_NextRing	; if the ring is not on-screen, branch
+		bge.s	.noren				; if the ring is not on-screen, branch
 		addi.w	#128-8,d2
-		lea		(Map_RingBIN).l,a1
-		moveq	#0,d1
-		move.b	-1(a4),d1			; get ring frame
-		bne.s	.BRL_2				; if this ring is using a specific frame, branch
-		move.b	(v_ani1_frame).w,d1	; use global frame
+		move.b	d1,d6				; extract stored ring frame value
+		add.b	d6,d6				; this will only affect d6 on a sparkle frame
 
-.BRL_2:
-		add.w	d1,d1
-		adda.w	(a1,d1.w),a1		; get frame data address
-		move.b	(a1)+,d0			; get Y offset
+		move.b	#-8,d0				; get Y offset
 		ext.w	d0
 		add.w	d2,d0				; add Y offset to Y pos
 		move.w	d0,(a2)+			; set Y pos
-		move.b	(a1)+,(a2)+			; set size
+
+		move.b	#5,(a2)+			; set size (2x2)
 		addq.b	#1,d5
 		move.b	d5,(a2)+			; set link field
-		move.w	(a1)+,d0			; get art tile from mapping
-		addi.w	#make_art_tile(ArtTile_Ring,1,0),d0	; add base art tile
-		move.w	d0,(a2)+			; set art tile and flags
-		move.b	(a1)+,d0			; get X offset
+
+		move.w	CMap_Ring(pc,d6.w),(a2)+	; set art tile and flags
+
+		move.b	#-8,d0				; get X offset
 		ext.w	d0
 		add.w	d3,d0				; add Y offset to Y pos
 		move.w	d0,(a2)+			; set Y pos
 
-; loc_171EC:
-BuildRings_NextRing:
+	.noren:
 		addq.w	#4,a0
 		subq.w	#4,d7
-		bne.w	BuildRings_Loop
+		bne.w	.loop
 		rts
+; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Custom mappings format
+
+; Differences:
+; No offset table (each sprite assumed to be 2 bytes: ArtTile + flags/offset)
+; No 'sprite pieces per frame' value (hardcoded to 1)
+; X-pos and Y-pos offsets are hardcoded to -8 ($F8)
+; No sprite size value (hardcoded to 5; 2x2)
+
+CMap_Ring:
+.ring:		dc.w make_art_tile(ArtTile_Ring,1,0)+$0000
+.sparkle1:	dc.w make_art_tile(ArtTile_Ring,1,0)+$0008
+.sparkle2:	dc.w make_art_tile(ArtTile_Ring,1,0)+$1808
+.sparkle3:	dc.w make_art_tile(ArtTile_Ring,1,0)+$0808
+.sparkle4:	dc.w make_art_tile(ArtTile_Ring,1,0)+$1008
+.blank:		dc.w 0, 0
+; ===========================================================================
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to perform initial rings manager setup
