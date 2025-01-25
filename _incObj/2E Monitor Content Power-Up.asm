@@ -107,7 +107,7 @@ ExtraLife:
 		addq.b	#1,(f_lifecount).w	; update the lives counter
 .playbgm:
 	; Lives Over/Underflow Fix End
-		move.w	#mus_ExtraLife,d0
+		move.w	#bgm_ExtraLife,d0
 		jmp		(PlaySound).w		; play extra life music
 ; ===========================================================================
 
@@ -155,7 +155,7 @@ Pow_Invinc:
 		bne.s	.nomusic								; if yes, branch
 		cmpi.b	#$C,(v_air).w
 		bls.s	.nomusic
-		move.w	#mus_Invincible,d0
+		move.w	#bgm_Invincible,d0
 		move.b	d0,(v_lastbgmplayed).w					; store last played music
 		jmp		(PlaySound).w							; play invincibility music
 ; ===========================================================================

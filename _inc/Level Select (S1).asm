@@ -53,7 +53,7 @@ LevelSelect:
 
 ; Error check removed following bugfix
 LevSel_PlaySnd:
-		cmpi.w	#mus__End+1,d0				; is music being played?
+		cmpi.w	#bgm__End+1,d0				; is music being played?
 		blo.s	.playmus					; if yes, branch
 		cmpi.w	#sfx__First,d0
 		blo.s	LevelSelect					; if yes, branch
@@ -61,9 +61,9 @@ LevSel_PlaySnd:
 .playmus:
 		lea	(PlaySound).w,a1				; play music
 
-		cmpi.w	#mus__End,d0				; is sfx being played?
+		cmpi.w	#bgm__End,d0				; is sfx being played?
 		blo.s	.play						; if not, branch
-		subi.w	#(mus__End-mus__First),d0
+		subi.w	#(bgm__End-bgm__First),d0
 
 		lea	(PlaySound_Special).w,a1		; play sfx
 
@@ -80,7 +80,7 @@ LevSel_Ending:
 
 LevSel_Credits:
 		move.b	#id_Credits,(v_gamemode).w	; set screen mode to $1C (Credits)
-		move.b	#mus_Credits,d0
+		move.b	#bgm_Credits,d0
 		bsr.w	PlaySound 					; play credits music
 		clr.w	(v_creditsnum).w
 		rts	

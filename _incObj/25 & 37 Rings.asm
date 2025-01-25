@@ -88,7 +88,7 @@ CollectRing:
 		addq.b	#1,(f_lifecount).w	; update the lives counter
 .playbgm:
 	; Lives Over/Underflow Fix End
-		move.w	#mus_ExtraLife,d0	; play extra life music
+		move.w	#bgm_ExtraLife,d0	; play extra life music
 		jmp	(PlaySound).w
 
 .playsnd:

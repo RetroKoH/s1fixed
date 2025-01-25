@@ -4,7 +4,7 @@
 ; ---------------------------------------------------------------------------
 
 GM_SRAMError:
-		move.b	#mus_Stop,d0
+		move.b	#bgm_Stop,d0
 		bsr.w	PlaySound_Special ; stop music
 		bsr.w	ClearPLC
 		bsr.w	PaletteFadeOut

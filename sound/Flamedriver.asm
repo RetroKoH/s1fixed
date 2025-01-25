@@ -391,8 +391,8 @@ z80_SoundDriver:
 		listing purecode
 ; ---------------------------------------------------------------------------
 	ifndef MusID__First
-		ifdef mus__First
-MusID__First			= mus__First
+		ifdef bgm__First
+MusID__First			= bgm__First
 		else
 			ifdef bgm__First
 MusID__First			= bgm__First
@@ -404,8 +404,8 @@ MusID__First			= 01h
 	endif
 
 	ifndef MusID_ExtraLife
-		ifdef mus_ExtraLife
-MusID_ExtraLife			= mus_ExtraLife
+		ifdef bgm_ExtraLife
+MusID_ExtraLife			= bgm_ExtraLife
 		else
 			ifdef bgm_ExtraLife
 MusID_ExtraLife			= bgm_ExtraLife
@@ -417,8 +417,8 @@ MusID_ExtraLife			= 2Ah
 	endif
 
 	ifndef MusID__End
-		ifdef mus__End
-MusID__End				= mus__End
+		ifdef bgm__End
+MusID__End				= bgm__End
 		else
 			ifdef bgm__Last
 MusID__End				= bgm__Last
@@ -434,9 +434,9 @@ MusID__End				= 33h
 			fatal "S&K Credits music must have an ID within the music range of [$\{MusID__First}, $\{MusID__End}), but it has ID $\{MusID_SKCredits}"
 		endif
 	endif
-	ifdef mus_CreditsK
-		if mus_CreditsK>=MusID__End
-			fatal "S&K Credits music must have an ID within the music range of [$\{MusID__First}, $\{MusID__End}), but it has ID $\{mus_CreditsK}"
+	ifdef bgm_CreditsK
+		if bgm_CreditsK>=MusID__End
+			fatal "S&K Credits music must have an ID within the music range of [$\{MusID__First}, $\{MusID__End}), but it has ID $\{bgm_CreditsK}"
 		endif
 	endif
 
@@ -560,8 +560,8 @@ DACID__End	= SndID__End
 	endif
 
 	ifndef FadeID__First
-		ifdef mus__FirstCmd
-FadeID__First			= mus__FirstCmd
+		ifdef bgm__FirstCmd
+FadeID__First			= bgm__FirstCmd
 		else
 			ifdef flg__First
 FadeID__First			= flg__First
@@ -573,8 +573,8 @@ FadeID__First			= 0E1h
 	endif
 
 	ifndef FadeID__End
-		ifdef mus__EndCmd
-FadeID__End				= mus__EndCmd
+		ifdef bgm__EndCmd
+FadeID__End				= bgm__EndCmd
 		else
 			ifdef flg__Last
 FadeID__End				= flg__Last
@@ -586,8 +586,8 @@ FadeID__End				= 0E6h
 	endif
 
 	ifndef MusID_StopSega
-		ifdef mus_StopSEGA
-MusID_StopSega			= mus_StopSEGA
+		ifdef bgm_StopSEGA
+MusID_StopSega			= bgm_StopSEGA
 		else
 			ifndef MusID_StopSega
 MusID_StopSega			= 0FEh
@@ -596,8 +596,8 @@ MusID_StopSega			= 0FEh
 	endif
 
 	ifndef MusID_SegaSound
-		ifdef mus_SEGA
-MusID_SegaSound			= mus_SEGA
+		ifdef bgm_SEGA
+MusID_SegaSound			= bgm_SEGA
 		else
 			ifdef sfx_Sega
 MusID_SegaSound			= sfx_Sega
@@ -5293,7 +5293,7 @@ Sound_C01:	include "sound/sfx/Continuous/Snd - Waterfall.asm"
 ; ===========================================================================
 ; Music Bank 1
 ; ---------------------------------------------------------------------------
-Mus_Bank1_Start:	startBank
+bgm_Bank1_Start:	startBank
 	Music_Master_Table
 MusData_GHZ:			include "sound/music/Mus01 - GHZ.asm"
 MusData_LZ:				include "sound/music/Mus02 - LZ.asm"

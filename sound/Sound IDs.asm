@@ -3,18 +3,18 @@
 ; ---------------------------------------------------------------------------
 
 	phase $E1
-mus__FirstCmd =			*			; ID of the first sound command
-mus_Fade =				*			; $E1 - fade out music
-mus_FadeOut				ds.b 1		; $E1 - fade out music
-mus_Stop				ds.b 1		; $E2 - stop music and sound effects
-mus_MutePSG				ds.b 1		; $E3 - mute all PSG channels
-mus_StopSFX				ds.b 1		; $E4 - stop all sound effects
-mus_FadeOut2			ds.b 1		; $E5 - fade out music (duplicate)
-mus__EndCmd =			*			; next ID after last sound command
+bgm__FirstCmd =			*			; ID of the first sound command
+bgm_Fade =				*			; $E1 - fade out music
+bgm_FadeOut				ds.b 1		; $E1 - fade out music
+bgm_Stop				ds.b 1		; $E2 - stop music and sound effects
+bgm_MutePSG				ds.b 1		; $E3 - mute all PSG channels
+bgm_StopSFX				ds.b 1		; $E4 - stop all sound effects
+bgm_FadeOut2			ds.b 1		; $E5 - fade out music (duplicate)
+bgm__EndCmd =			*			; next ID after last sound command
 
-mus_FA =				$FA			; $FA - ???
-mus_StopSEGA =			$FE			; $FE - Stop SEGA sound
-mus_SEGA =				$FF			; $FF - Play SEGA sound
+bgm_FA =				$FA			; $FA - ???
+bgm_StopSEGA =			$FE			; $FE - Stop SEGA sound
+bgm_SEGA =				$FF			; $FF - Play SEGA sound
 
 	dephase
 
@@ -23,37 +23,37 @@ mus_SEGA =				$FF			; $FF - Play SEGA sound
 ; ---------------------------------------------------------------------------
 
 	phase $01
-mus__First =				*		; ID of the first music
+bgm__First =				*		; ID of the first music
 
 ; Levels
-mus_GHZ					ds.b 1		; $01
-mus_MZ					ds.b 1		; $02
-mus_SYZ					ds.b 1		; $03
-mus_LZ					ds.b 1		; $04
-mus_SLZ					ds.b 1		; $05
-mus_SBZ					ds.b 1		; $06
+bgm_GHZ					ds.b 1		; $01
+bgm_MZ					ds.b 1		; $02
+bgm_SYZ					ds.b 1		; $03
+bgm_LZ					ds.b 1		; $04
+bgm_SLZ					ds.b 1		; $05
+bgm_SBZ					ds.b 1		; $06
 
 ; Main
-mus_Invincible			ds.b 1		; $07
-mus_ExtraLife			ds.b 1		; $08
-mus_SpecialStage		ds.b 1		; $09
-mus_Title				ds.b 1		; $0A
-mus_Ending				ds.b 1		; $0B
+bgm_Invincible			ds.b 1		; $07
+bgm_ExtraLife			ds.b 1		; $08
+bgm_SpecialStage		ds.b 1		; $09
+bgm_Title				ds.b 1		; $0A
+bgm_Ending				ds.b 1		; $0B
 
 ; Bosses
-mus_Boss				ds.b 1		; $0C
-mus_FZ					ds.b 1		; $0D
+bgm_Boss				ds.b 1		; $0C
+bgm_FZ					ds.b 1		; $0D
 
 ; End
-mus_GotThrough			ds.b 1		; $0E
-mus_GameOver			ds.b 1		; $0F
-mus_Continue			ds.b 1		; $10
-mus_Credits				ds.b 1		; $11
-mus_Drowning			ds.b 1		; $12
-mus_Emerald				ds.b 1		; $13
-mus_Options				ds.b 1		; $14
+bgm_GotThrough			ds.b 1		; $0E
+bgm_GameOver			ds.b 1		; $0F
+bgm_Continue			ds.b 1		; $10
+bgm_Credits				ds.b 1		; $11
+bgm_Drowning			ds.b 1		; $12
+bgm_Emerald				ds.b 1		; $13
+bgm_Options				ds.b 1		; $14
 
-mus__End =				*			; next ID after last music
+bgm__End =				*			; next ID after last music
 
 	dephase
 
