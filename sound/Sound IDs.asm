@@ -7,29 +7,29 @@ ptrsize :=	4
 idstart :=	1
 ; $00 is reserved for silence
 
-mus__First = idstart
-mus_GHZ =			SMPS_id(ptr_mus01)
-mus_LZ =			SMPS_id(ptr_mus02)
-mus_MZ =			SMPS_id(ptr_mus03)
-mus_SLZ =			SMPS_id(ptr_mus04)
-mus_SYZ =			SMPS_id(ptr_mus05)
-mus_SBZ =			SMPS_id(ptr_mus06)
-mus_Invincible =	SMPS_id(ptr_mus07)
-mus_ExtraLife =		SMPS_id(ptr_mus08)
-mus_SS =			SMPS_id(ptr_mus09)
-mus_Title =			SMPS_id(ptr_mus0A)
-mus_Ending =		SMPS_id(ptr_mus0B)
-mus_Boss =			SMPS_id(ptr_mus0C)
-mus_FZ =			SMPS_id(ptr_mus0D)
-mus_GotThrough =	SMPS_id(ptr_mus0E)
-mus_GameOver =		SMPS_id(ptr_mus0F)
-mus_Continue =		SMPS_id(ptr_mus10)
-mus_Credits =		SMPS_id(ptr_mus11)
-mus_Drowning =		SMPS_id(ptr_mus12)
-mus_Emerald =		SMPS_id(ptr_mus13)
-mus_Options =		SMPS_id(ptr_mus14)
+bgm__First = idstart
+bgm_GHZ =			SMPS_id(ptr_mus01)
+bgm_LZ =			SMPS_id(ptr_mus02)
+bgm_MZ =			SMPS_id(ptr_mus03)
+bgm_SLZ =			SMPS_id(ptr_mus04)
+bgm_SYZ =			SMPS_id(ptr_mus05)
+bgm_SBZ =			SMPS_id(ptr_mus06)
+bgm_Invincible =	SMPS_id(ptr_mus07)
+bgm_ExtraLife =		SMPS_id(ptr_mus08)
+bgm_SS =			SMPS_id(ptr_mus09)
+bgm_Title =			SMPS_id(ptr_mus0A)
+bgm_Ending =		SMPS_id(ptr_mus0B)
+bgm_Boss =			SMPS_id(ptr_mus0C)
+bgm_FZ =			SMPS_id(ptr_mus0D)
+bgm_GotThrough =	SMPS_id(ptr_mus0E)
+bgm_GameOver =		SMPS_id(ptr_mus0F)
+bgm_Continue =		SMPS_id(ptr_mus10)
+bgm_Credits =		SMPS_id(ptr_mus11)
+bgm_Drowning =		SMPS_id(ptr_mus12)
+bgm_Emerald =		SMPS_id(ptr_mus13)
+bgm_Options =		SMPS_id(ptr_mus14)
 
-mus__Last =			SMPS_id(ptr_musend)-1
+bgm__Last =			SMPS_id(ptr_musend)-1
 
 
 ; Sound effects
@@ -119,9 +119,9 @@ idstart :=	$FA
 
 flg__First = idstart
 sfx_Fade =			SMPS_id(ptr_flgFA)
-mus_Fade =			SMPS_id(ptr_flgFB)
+bgm_Fade =			SMPS_id(ptr_flgFB)
 sfx_Sega =			SMPS_id(ptr_flgFC)
-mus_Speedup =		SMPS_id(ptr_flgFD)
-mus_Slowdown =		SMPS_id(ptr_flgFE)
-mus_Stop =			SMPS_id(ptr_flgFF)
+bgm_Speedup =		SMPS_id(ptr_flgFD)
+bgm_Slowdown =		SMPS_id(ptr_flgFE)
+bgm_Stop =			SMPS_id(ptr_flgFF)
 flg__Last =			SMPS_id(ptr_flgend)-1

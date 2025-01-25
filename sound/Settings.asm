@@ -76,15 +76,15 @@ Play_Sound_2		= SMPS_QueueSound2
 PlaySound_Unused	= SMPS_QueueSound3
 Play_Sample			= SMPS_PlayDACSample
 
-mus_FadeOut			= mus_Fade
+bgm_FadeOut			= bgm_Fade
 
 Clone_Driver_RAM	= (-(v_snddriver_ram&$80000000)<<1)|v_snddriver_ram
 
 ; ---SOUND ID BOUNDARIES---
-MusID__First		= mus__First
+MusID__First		= bgm__First
 ;	| ID of your first song
 ;
-MusID__End			= mus__Last+1
+MusID__End			= bgm__Last+1
 ;	| ID of your last song+1
 ;
 SndID__First		= sfx__First
@@ -107,7 +107,7 @@ FlgID__End			= flg__Last+1
 ;
 
 ; ---MUSIC CONSTANTS---
-MusID_ExtraLife		= mus_ExtraLife
+MusID_ExtraLife		= bgm_ExtraLife
 ;	| ID of your Extra Life jingle
 ;
 
