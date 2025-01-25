@@ -96,7 +96,7 @@ Spring_BounceUp:
 
 Spring_AniUp:	; Routine 4
 		lea		Ani_Spring(pc),a1
-		bra.w	AnimateSprite
+		jmp		(AnimateSprite).w
 ; ===========================================================================
 
 Spring_ResetUp:	; Routine 6
@@ -153,7 +153,7 @@ loc_DC56:
 
 Spring_AniLR:	; Routine $A
 		lea		Ani_Spring(pc),a1
-		bra.w	AnimateSprite
+		jmp		(AnimateSprite).w
 ; ===========================================================================
 
 Spring_ResetLR:	; Routine $C
@@ -196,7 +196,7 @@ Spring_BounceDwn:
 
 Spring_AniDwn:	; Routine $10
 		lea		Ani_Spring(pc),a1
-		bra.w	AnimateSprite
+		jmp		(AnimateSprite).w
 ; ===========================================================================
 
 Spring_ResetDwn:

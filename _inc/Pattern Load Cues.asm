@@ -68,9 +68,9 @@ PLC_Mainend:
 ; ---------------------------------------------------------------------------
 PLC_Main2:	dc.w ((PLC_Main2end-PLC_Main2-2)/6)-1
 		plcm	Nem_Lamp,			ArtTile_Lamppost				; lamppost
-		plcm	Nem_Ring,			ArtTile_Ring					; rings	-- Moved here to load over the title card
+		plcm	Nem_Sparkles,		ArtTile_RingSparkles			; ring sparkles
 		plcm	Nem_Monitors,		ArtTile_Monitor					; monitors
-		plcm	Nem_Points,			ArtTile_Points					; points from enemy
+		plcm	Nem_Points,			ArtTile_Points					; points from enemies
 PLC_Main2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - explosion
@@ -341,7 +341,7 @@ PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
 		plcm	Nem_SSGlass,    ArtTile_SS_Glass				; glass block
 		plcm	Nem_SSEmerald,  ArtTile_SS_Emerald				; emeralds
 ;		plcm	Nem_SSZone1,    ArtTile_SS_Zone_1				; ZONE X block
-		plcm	Nem_Ring,		ArtTile_SS_Ring					; Rings	-- RetroKoH VRAM Overhaul
+		plcm	Nem_Sparkles,	ArtTile_SS_RingSparkles			; ring sparkles
 		plcm	Nem_SSCursor,	ArtTile_SS_Cursor				; Debug Mode Cursor
 		plcm	Nem_SSDelete,	ArtTile_SS_Delete				; Delete Icon (Debug)
 PLC_SpeStageend:

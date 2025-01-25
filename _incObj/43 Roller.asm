@@ -34,7 +34,7 @@ Roll_Action:	; Routine 2
 		move.w	Roll_Index2(pc,d0.w),d1
 		jsr		Roll_Index2(pc,d1.w)
 		lea		Ani_Roll(pc),a1
-		bsr.w	AnimateSprite
+		jsr		(AnimateSprite).w
 		move.w	obX(a0),d0
 		andi.w	#$FF80,d0
 		move.w	(v_screenposx).w,d1

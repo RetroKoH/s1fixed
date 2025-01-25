@@ -472,7 +472,12 @@ v_ani2_frame:		ds.b	1		; synchronised sprite animation 2 - current frame
 v_ani3_time:		ds.b	1		; synchronised sprite animation 3 - time until next frame
 v_ani3_frame:		ds.b	1		; synchronised sprite animation 3 - current frame
 v_ani3_buf:			ds.w	1		; synchronised sprite animation 3 - info buffer
+
+v_DPLCframe1_buf:	ds.b	1		; frame buffer for regular rings
+v_DPLCframe2_buf:	ds.b	1		; frame buffer for lost rings
+
 			ds.b	$26		; unused
+
 v_limittopdb:		ds.w	1		; level upper boundary, buffered for debug mode
 v_limitbtmdb:		ds.w	1		; level bottom boundary, buffered for debug mode
 			ds.b	$C		; unused

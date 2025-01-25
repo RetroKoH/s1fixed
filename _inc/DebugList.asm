@@ -1,6 +1,6 @@
 ; ---------------------------------------------------------------------------
-; Debug	mode item lists - RetroKoH modified for a wider range of options, meant to closer match Sonic 1 iOS lists.
-; Add a separate list for SPECIAL STAGE DEBUG
+; Debug	mode item lists
+; RetroKoH modified for a wider range of options, meant to closer match Sonic 1 iOS lists.
 ; ---------------------------------------------------------------------------
 DebugList:
 	dc.w .GHZ-DebugList
