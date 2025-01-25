@@ -188,7 +188,7 @@ HUDBlinking: = 1
 ; Name: Updated Signposts
 ; Credit: RetroKoH
 ; Function: Gives the Signposts a base, similar to those in Sonic CD.
-UpdatedSignposts: = 1
+UpdatedSignposts: = 2				; 0 = default signposts; 1 = CD signposts; 2 = hybrid (shorter CD) signposts
 
 ; Name: SBZ3 New Art Mod
 ; Credit: Trickster/Rohan, RetroKoH
