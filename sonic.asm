@@ -5527,11 +5527,14 @@ Obj_Index:
 		include	"_anim/Signpost.asm"
 
 dplcTiles := Art_Signpost		; MainMemory 128k Boundary Check for DPLCs
-	if UpdatedSignposts
-		include	"_maps/Signpost - Updated - DPLCs.asm"
-	else
+	switch UpdatedSignposts
+	case 2
+		include	"_maps/Signpost - Hybrid - DPLCs.asm"
+	case 1
+		include	"_maps/Signpost - CD - DPLCs.asm"
+	elsecase
 		include	"_maps/Signpost - DPLCs.asm"
-	endif
+	endcase
 dplcTiles := 0					; 128k Boundary Check for DPLCs End
 
 		include	"_incObj/4C & 4D Lava Geyser Maker.asm"
@@ -7515,13 +7518,15 @@ Art_SuperStars:	binclude	"artunc/Super Sonic Stars.bin"
 Art_SuperStars_End:	even
 	endif
 
-	if UpdatedSignposts
-Art_Signpost:	binclude	"artunc/Signpost - Updated.bin"		; End-of-level Signpost -- RetroKoH VRAM Overhaul
+	switch UpdatedSignposts
+	case 2
+Art_Signpost:	binclude	"artunc/Signpost - Hybrid.bin"	; End-of-level Signpost -- RetroKoH VRAM Overhaul
+	case 1
+Art_Signpost:	binclude	"artunc/Signpost - CD.bin"		; End-of-level Signpost -- RetroKoH VRAM Overhaul
+	elsecase
+Art_Signpost:	binclude	"artunc/Signpost.bin"			; End-of-level Signpost -- RetroKoH VRAM Overhaul
+	endcase
 		even
-	else
-Art_Signpost:	binclude	"artunc/Signpost.bin"				; End-of-level Signpost -- RetroKoH VRAM Overhaul
-		even
-	endif
 
 Art_BigRing:	binclude	"artunc/Giant Ring.bin"				; Giant Ring -- RetroKoH VRAM Overhaul
 		even
@@ -8248,11 +8253,14 @@ Art_SbzSmoke:	binclude	"artunc/SBZ Background Smoke.bin"
 		include	"_maps/Light.asm"
 		include	"_maps/Bumper.asm"
 
-	if UpdatedSignposts
-		include	"_maps/Signpost - Updated.asm"
-	else
+	switch UpdatedSignposts
+	case 2
+		include	"_maps/Signpost - Hybrid.asm"
+	case 1
+		include	"_maps/Signpost - CD.asm"
+	elsecase
 		include	"_maps/Signpost.asm"
-	endif
+	endcase
 
 		include	"_maps/Lava Tag.asm"
 		include	"_maps/Lava Geyser.asm"
