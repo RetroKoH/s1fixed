@@ -167,7 +167,7 @@ Sign_Spin:	; Routine 4
 		add.w	obY(a0),d0
 		move.w	d0,obY(a1)
 		move.l	#Map_Ring,obMap(a1)
-		move.w	#make_art_tile(ArtTile_Ring,1,0),obGfx(a1)
+		move.w	#make_art_tile(ArtTile_RingSparkles,1,0),obGfx(a1)
 		move.b	#4,obRender(a1)
 		move.w	#priority2,obPriority(a1)	; RetroKoH/Devon S3K+ Priority Manager
 		move.b	#8,obActWid(a1)

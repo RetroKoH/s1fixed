@@ -502,6 +502,8 @@ ArtTile_Animal_1:				equ $568				; ✓
 ArtTile_Animal_2:				equ $57A				; ✓
 ArtTile_Explosion:				equ $58C				; ✓
 ArtTile_Ring:					equ $5EC				; ✓
+ArtTile_LostRing:				equ $5F0				; ✓
+ArtTile_RingSparkles:			equ $5F4				; ✓
 ArtTile_Monitor:				equ $680				; ✓ - Optimized by removing life icon (Use HUD life icon)
 ArtTile_HUD:					equ $6CA				; ✓ - Optimized by removing 1 R
 ArtTile_Sonic:					equ $780				; ✓ - Player 1
@@ -584,6 +586,7 @@ ArtTile_SS_Plane_6:				equ $700				; Check this
 ArtTile_SS_Emerald:				equ $770
 ArtTile_SS_Zone_1:				equ $790				; ✓
 ArtTile_SS_Ring:				equ $799				; ✓
+ArtTile_SS_RingSparkles:		equ $79D				; ✓
 ArtTile_SS_Cursor:				equ $790				; ✓
 ArtTile_SS_Delete:				equ $7B0				; Check this
 

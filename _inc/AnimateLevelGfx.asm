@@ -85,7 +85,7 @@ AniArt_GHZ_Waterfall_Draw:
 		move.l	a0,d1								; d1 = transfer source
 		move.w	#ArtTile_GHZ_Waterfall*tile_size,d2	; d2 = transfer destination
 		move.w	#$100/2,d3							; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 AniArt_GHZ_Flower1:
@@ -99,7 +99,7 @@ AniArt_GHZ_Flower1_Draw:
 		move.l	a0,d1								; d1 = transfer source
 		move.w	#ArtTile_GHZ_Sunflower*tile_size,d2	; d2 = transfer destination
 		move.w	#$200/2,d3							; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 AniArt_GHZ_InitDraw:
 		bsr.s	AniArt_GHZ_Waterfall_Draw   
@@ -128,7 +128,7 @@ AniArt_GHZ_Flower2_Render:
 		move.l	a0,d1									; d1 = transfer source
 		move.w	#ArtTile_GHZ_Purple_Flower*tile_size,d2	; d2 = transfer destination
 		move.w	#$180/2,d3								; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l	
+		jmp		(QueueDMATransfer).w	
 
 AniArt_GHZ_Flower2_Skip:
 		rts
@@ -191,7 +191,7 @@ AniArt_LZ_Wheels_Render:
 		move.l	a0,d1									; d1 = transfer source
 		move.w	#ArtTile_LZ_Conveyor_Wheel*tile_size,d2	; d2 = transfer destintation
 		move.w	#$200/2,d3								; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 
 AniArt_LZ_Wheels_Skip:
 		rts
@@ -240,7 +240,7 @@ AniArt_MZ_LavaSurface_Draw:
 		move.l	a0,d1									; d1 = transfer source
 		move.w	#ArtTile_MZ_Animated_Lava*tile_size,d2	; d2 = transfer destintation
 		move.w	#$100/2,d3								; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 AniArt_MZ_LavaMain:
@@ -268,7 +268,7 @@ AniArt_MZ_LavaMain:
 		move.l	#$FFA200,d1				; d1 = art buffer (WARNING! Overlaps with the end of chunks data, but it should be unused in MZ)
 		move.w	#ArtTile_MZ_Animated_Magma*tile_size,d2
 		move.w	#$200/2,d3
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 AniArt_MZ_Torch:
@@ -285,7 +285,7 @@ AniArt_MZ_Torch_Draw:
 		move.l	a0,d1							; d1 = transfer source
 		move.w	#ArtTile_MZ_Torch*tile_size,d2	; d2 = transfer destintation
 		move.w	#$C0/2,d3						; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------
@@ -456,7 +456,7 @@ AniArt_SBZ:
 		move.l	a0,d1							; d1 = transfer source
 												; d2 is already set up
 		move.w	#$180/2,d3						; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 .untilnextpuff:
@@ -466,13 +466,13 @@ AniArt_SBZ:
 		move.l	a0,d1							; d1 = transfer source
 												; d2 is already set up
 		move.w	#$C0/2,d3						; d3 = transfer size (words)
-		jsr		(QueueDMATransfer).l
+		jsr		(QueueDMATransfer).w
 
 	; reestablish values
 		move.l	a0,d1							; d1 = transfer source
 		move.w	#(ArtTile_SBZ_Smoke_Puff_1+6)*tile_size,d2	; d2 = next transfer destination
 		move.w	#$C0/2,d3						; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l			; load blank tiles for no smoke puff
+		jmp		(QueueDMATransfer).w			; load blank tiles for no smoke puff
 ; ===========================================================================
 
 .chk_smokepuff2:
@@ -501,7 +501,7 @@ AniArt_SBZ:
 		move.l	a0,d1							; d1 = transfer source
 												; d2 is already set up
 		move.w	#$180/2,d3						; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 .frameOffsets:
@@ -515,13 +515,13 @@ AniArt_SBZ:
 		move.l	a0,d1							; d1 = transfer source
 												; d2 is already set up
 		move.w	#$C0/2,d3						; d3 = transfer size (words)
-		jsr		(QueueDMATransfer).l
+		jsr		(QueueDMATransfer).w
 
 	; reestablish values
 		move.l	a0,d1							; d1 = transfer source
 		move.w	#(ArtTile_SBZ_Smoke_Puff_2+6)*tile_size,d2	; d2 = next transfer destination
 		move.w	#$C0/2,d3						; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l			; load blank tiles for no smoke puff
+		jmp		(QueueDMATransfer).w			; load blank tiles for no smoke puff
 ; ===========================================================================
 
 .end:
@@ -559,14 +559,14 @@ AniArt_Ending_Flower1_Draw:
 		move.l	a0,d1									; d1 = transfer source
 		move.w	#ArtTile_GHZ_Sunflower*tile_size,d2		; d2 = VRAM address
 		move.w	#$200/2,d3								; d3 = transfer size (words)
-		jsr		(QueueDMATransfer).l
+		jsr		(QueueDMATransfer).w
 
 		lea		((v_128x128+$1000)&$FFFFFF).l,a0		; load 2nd big flower from RAM
 		adda.w	d4,a0
 		move.l	a0,d1									; d1 = transfer source
 		move.w	#ArtTile_GHZ_Big_Flower_2*tile_size,d2	; d2 = VRAM address
 		move.w	#$200/2,d3								; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 AniArt_Ending_Flower2:
@@ -580,7 +580,7 @@ AniArt_Ending_Flower2_Draw:
 		move.l	a0,d1									; d1 = transfer source
 		move.w	#ArtTile_GHZ_Purple_Flower*tile_size,d2	; d2 = VRAM address
 		move.w	#$200/2,d3								; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 AniArt_Ending_Flower2_FrameOffsets:
@@ -606,7 +606,7 @@ AniArt_Ending_Flower3_Draw:
 		move.l	a0,d1								; d1 = transfer source
 		move.w	#ArtTile_GHZ_Flower_3*tile_size,d2	; d2 = VRAM address
 		move.w	#$200/2,d3							; d3 = transfer size
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================
 
 AniArt_Ending_Flower3_FrameOffsets:
@@ -624,5 +624,5 @@ AniArt_Ending_Flower4_Draw:
 		move.l	a0,d1								; d1 = transfer source
 		move.w	#ArtTile_GHZ_Flower_4*tile_size,d2	; d2 = VRAM address
 		move.w	#$200/2,d3							; d3 = transfer size (words)
-		jmp		(QueueDMATransfer).l
+		jmp		(QueueDMATransfer).w
 ; ===========================================================================

@@ -77,10 +77,10 @@ specialStageData: macro frame,mappings,palette,vram
 
 		specialStageData	0, Map_SS_R,      0, ArtTile_SS_Ghost_Block
 	; RetroKoH VRAM Overhaul
-		specialStageData	8, Map_Ring,      1, ArtTile_SS_Ring
-		specialStageData	9, Map_Ring,      1, ArtTile_SS_Ring
-		specialStageData	$A, Map_Ring,     1, ArtTile_SS_Ring
-		specialStageData	$B, Map_Ring,     1, ArtTile_SS_Ring
+		specialStageData	1, Map_Ring,      1, ArtTile_SS_RingSparkles
+		specialStageData	2, Map_Ring,      1, ArtTile_SS_RingSparkles
+		specialStageData	3, Map_Ring,      1, ArtTile_SS_RingSparkles
+		specialStageData	4, Map_Ring,      1, ArtTile_SS_RingSparkles
 	; RetroKoH VRAM Overhaul End
 		specialStageData	0, Map_SS_Glass,  1, ArtTile_SS_Emerald_Sparkle
 		specialStageData	1, Map_SS_Glass,  1, ArtTile_SS_Emerald_Sparkle
