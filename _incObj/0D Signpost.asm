@@ -51,6 +51,13 @@ Sign_Main:	; Routine 0
 		move.b	#$FF,objoff_3F(a0)					; Added for DPLC frame check
 
 Sign_Touch:	; Routine 2
+		tst.b	(f_bigring).w						; did Sonic collect the Giant Ring?
+		beq.s	.nobigring							; if not, check for collision
+		addq.b	#2,obRoutine(a0)					; RetroKoH softlock fix
+		move.b	#1,ob2ndRout(a0)
+		rts
+
+	.nobigring:
 		lea		(v_player).w,a1
 		move.w	obX(a1),d0
 		sub.w	obX(a0),d0
@@ -188,7 +195,8 @@ Sign_SparkPos:
 
 Sign_SonicRun:	; Routine 6
 		tst.w	(v_debuguse).w	; is debug mode	on?
-		bne.s	ret_EC86	; if yes, branch
+		bne.s	ret_EC86		; if yes, branch
+
 	if SignpostControlLockFix=1
 	; Signpost Routine Fix
 	; This function's checks are a mess, creating an edgecase where it's
@@ -231,10 +239,9 @@ loc_EC86:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-
 GotThroughAct:
 		tst.b	(v_endcard).w
-		bne.w	locret_ECEE
+		bne.s	ret_EC86
 		move.w	(v_limitright2).w,(v_limitleft2).w
 		bclr	#sta2ndInvinc,(v_player+obStatus2nd).w	; disable invincibility
 		clr.b	(f_timecount).w							; stop time counter
@@ -329,9 +336,6 @@ GotThroughAct:
 
 		move.b	#bgm_GotThrough,d0
 		jmp		(PlaySound_Special).w					; play "Sonic got through" music
-
-locret_ECEE:
-		rts	
 ; End of function GotThroughAct
 
 ; ===========================================================================
