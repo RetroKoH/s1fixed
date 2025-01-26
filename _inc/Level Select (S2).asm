@@ -377,17 +377,17 @@ LevelSelect_DrawSoundNumber:
 		move.w	(v_levselsound).w,d0
 		move.b	d0,d2
 		lsr.b	#4,d0
-		bsr.s	.bra1		; draw 1st digit
+		bsr.s	.drawdigit	; draw 1st digit
 		move.b	d2,d0
 							; fallthrough -- draw 2nd digit
 
-.bra1:
+	.drawdigit:
 		andi.w	#$F,d0
 		cmpi.b	#$A,d0		; is digit $A-$F?
-		blo.s	.bra2		; if not, branch
+		blo.s	.number		; if not, branch
 		addq.b	#7,d0		; use alpha characters -- ASCII font mod
 
-.bra2:
+	.number:
 		addi.b	#$1F,d0		; ASCII font offset (brings us to digits)
 		add.w	d3,d0
 		move.w	d0,(a6)
