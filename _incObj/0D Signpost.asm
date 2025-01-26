@@ -195,7 +195,7 @@ Sign_SparkPos:
 
 Sign_SonicRun:	; Routine 6
 		tst.w	(v_debuguse).w	; is debug mode	on?
-		bne.s	ret_EC86		; if yes, branch
+		bne.s	Sign_Exit		; if yes, branch
 
 	if SignpostControlLockFix=1
 	; Signpost Routine Fix
@@ -206,7 +206,7 @@ Sign_SonicRun:	; Routine 6
 		tst.b	(v_player+obID).w			; Check if Sonic's object has been deleted (because he entered the giant ring)
 		beq.s	loc_EC86
 		btst	#staAir,(v_player+obStatus).w
-		bne.s	ret_EC86
+		bne.s	Sign_Exit
 	; Signpost Routine Fix End
 		move.b	#1,(f_lockctrl).w			; lock controls
 		move.w	#btnR<<8,(v_jpadhold2).w	; make Sonic run to the right
@@ -226,8 +226,9 @@ Sign_SonicRun:	; Routine 6
 		cmp.w	d1,d0
 		bhs.s	loc_EC86
 
-ret_EC86:		; Added this rts label to optimize three branches above.
-		rts
+Sign_Exit:	; Routine 8 -- ; Moved this rts label to optimize some branches.
+		rts	
+; ===========================================================================
 
 loc_EC86:
 		addq.b	#2,obRoutine(a0)
@@ -241,7 +242,7 @@ loc_EC86:
 
 GotThroughAct:
 		tst.b	(v_endcard).w
-		bne.s	ret_EC86
+		bne.s	Sign_Exit
 		move.w	(v_limitright2).w,(v_limitleft2).w
 		bclr	#sta2ndInvinc,(v_player+obStatus2nd).w	; disable invincibility
 		clr.b	(f_timecount).w							; stop time counter
@@ -342,10 +343,6 @@ GotThroughAct:
 TimeBonuses:
 		dc.w 5000, 5000, 1000, 500, 400, 400, 300, 300,	200, 200
 		dc.w 200, 200, 100, 100, 100, 100, 50, 50, 50, 50, 0
-; ===========================================================================
-
-Sign_Exit:	; Routine 8
-		rts	
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------
