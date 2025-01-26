@@ -273,27 +273,22 @@ LevSel_DrawSnd:
 		addi.w	#$80,d0
 		move.b	d0,d2
 		lsr.b	#4,d0
-		bsr.s	LevSel_ChgSnd			; draw 1st digit
+		bsr.s	.drawdigit	; draw 1st digit
 		move.b	d2,d0
-										; fallthrough -- draw 2nd digit
-; End of function LevSelTextLoad
+							; fallthrough -- draw 2nd digit
 
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-LevSel_ChgSnd:
+.drawdigit:
 		andi.w	#$F,d0
 		cmpi.b	#$A,d0		; is digit $A-$F?
-		blo.s	LevSel_Numb	; if not, branch
-		addq.b	#7,d0		; use alpha characters -- Soulless Sentinel Level Select ASCII Mod
+		blo.s	.number		; if not, branch
+		addq.b	#7,d0		; use alpha characters -- ASCII font mod
 
-LevSel_Numb:
+.number:
 		addi.b	#$F,d0		; ASCII font offset (brings us to digits)
 		add.w	d3,d0
 		move.w	d0,(a6)
 		rts	
-; End of function LevSel_ChgSnd
+; End of function LevSelTextLoad
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------

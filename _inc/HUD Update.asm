@@ -296,15 +296,16 @@ HudDb_XY2:
 		moveq	#7,d6
 		lea		(Art_Text).l,a1
 
-HudDb_XYLoop:
+	.loop:
 		rol.w	#4,d1
 		move.w	d1,d2
 		andi.w	#$F,d2
-		cmpi.w	#$A,d2
-		bcs.s	loc_1C8B2
-		addq.w	#4,d2			; Accomodate new text art for ASCII text
+		cmpi.b	#$A,d2		; is digit $A-$F?
+		bcs.s	.number		; if not, branch
+		addq.b	#7,d2		; use alpha characters -- Soulless Sentinel Level Select ASCII Mod
 
-loc_1C8B2:
+	.number:
+		addi.b	#$F,d2		; ASCII font offset (brings us to digits)
 		lsl.w	#5,d2
 		lea		(a1,d2.w),a3
 		move.l	(a3)+,(a6)
@@ -316,7 +317,7 @@ loc_1C8B2:
 		move.l	(a3)+,(a6)
 		move.l	(a3)+,(a6)
 		swap	d1
-		dbf		d6,HudDb_XYLoop	; repeat 7 more times
+		dbf		d6,.loop	; repeat 7 more times
 
 		rts	
 ; End of function HudDb_XY2
