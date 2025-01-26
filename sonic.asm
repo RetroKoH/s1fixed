@@ -4979,7 +4979,10 @@ MvSonic2:
 		sub.w	d2,obX(a1)
 		move.w	obX(a1),d2			; copy for below
 
-	; Move Shields with Sonic
+	; RetroKoH Move Shields with Sonic
+; NOTE: I don't apply this to invincibiliity for two reasons:
+; 1. It'd be a bit too complicated to apply to the main position, AND all of its subsprites.
+; 2. With the trailing effect, it's not any sort of noticeable issue to have it lag behind slightly.
 		lea		(v_shieldobj).w,a2
 		tst.b	obID(a2)
 		beq.s	.noShield
@@ -5010,10 +5013,11 @@ MvSonic2:
 		move.w	d2,obX(a2)
 		move.w	d0,obY(a2)
 		move.w	d3,d2		; return original x-pos to d2
+	; Move Shields with Sonic End
 	
 .noShield:
 	if (SpinDashEnabled|SkidDustEnabled)=1
-	; Move Spindash dust with Sonic
+	; RetroKoH Move Spindash dust with Sonic
 		lea		(v_playerdust).w,a2
 		cmpi.b	#1,obAnim(a2)
 		bne.s	locret_7B62

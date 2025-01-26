@@ -141,6 +141,19 @@ Tele_MoveSonic:	; Routine 6
 		add.l	d0,obX(a1)			; apply to x-axis position
 		lsl.l	#8,d2				; multiply by $100 (combine ext and asl to become lsl)
 		add.l	d2,obY(a1)			; apply to y-axis position
+
+	; RetroKoH Move Shields with Sonic
+; NOTE: I don't apply this to invincibiliity for two reasons:
+; 1. It'd be a bit too complicated to apply to the main position, AND all of its subsprites.
+; 2. With the trailing effect, it's not any sort of noticeable issue to have it lag behind slightly.
+		lea		(v_shieldobj).w,a2
+		tst.b	obID(a2)
+		beq.s	.noShield
+		move.w	obX(a1),obX(a2)
+		move.w	obY(a1),obY(a2)
+	; Move Shields with Sonic End
+
+	.noShield:
 		rts
 ; ===========================================================================
 
