@@ -46,6 +46,8 @@ Stars_Next:	; Routine 2
 		move.b	mainspr_routine(a0),d4					; d4 = current animation frame
 		lea		(a3,d4.w),a3							; a3 = location of mapping frame
 		lea		stars_trackdata(a0),a4					; previous tracking data for each subsprite
+		move.b	(v_player+obStatus).w,obStatus(a0)		; set status early (we'll need it for position adjustment later
+		move.b	(v_player+obAnim).w,d5					; more efficient to store this once and compare 4-8 times later
 
 ; loop to set track position
 .trail:
@@ -68,50 +70,49 @@ Stars_Next:	; Routine 2
 		move.b	d1,(a4)+
 		lea		(v_tracksonic).w,a1
 		lea		(a1,d0.w),a1
-		tst.b	d3						; is this the main anim?
-		bne.s	.subanims
-
-.anim0:
-		move.w	(a1)+,obX(a0)
-		move.w	(a1)+,obY(a0)
-		move.b	(a3),mainspr_mapframe(a0)
-		bra.s	.setstatus
-
-.subanims:
-		move.w	(a1)+,(a2)+				; sub?_x_pos
-		move.w	(a1)+,(a2)+				; sub?_y_pos
-		adda.w	#$18,a3
-		move.b	(a3),1(a2)				; sub?_mapframe
-		addq.w	#2,a2					; skip to next sub data
-
-.setstatus:
-		move.b	(v_player+obStatus).w,obStatus(a0)
+		move.w	(a1)+,d4			; current x-position, pre-adjustment
 
 	; Mercury Shield/Invincibility Positioning Fix
 		move.b	obStatus(a0),d0
 		move.w	#$A,d1
 
 	if CDBalancing=1
-		cmpi.b	#aniID_Balance2,(v_player+obAnim).w
+		cmpi.b	#aniID_Balance2,d5
 		beq.s	.shift
-		cmpi.b	#aniID_Balance3,(v_player+obAnim).w
+		cmpi.b	#aniID_Balance3,d5
 		bne.s	.noshift
 		bchg	#staFacing,d0
 		move.w	#4,d1
 	else	
-		cmpi.b	#aniID_Balance,(v_player+obAnim).w
+		cmpi.b	#aniID_Balance,d5
 		bne.s	.noshift
 	endif
 		
 .shift:
-		sub.w	d1,obX(a0)
+		sub.w	d1,d4
 		btst	#staFlipX,d0		; X-Flip sprite bit
 		beq.s	.noshift
 		add.w	d1,d1
-		add.w	d1,obX(a0)
+		add.w	d1,d4
 .noshift:
 	; Shield/Invincibility Positioning Fix End
+		tst.b	d3						; is this the main anim?
+		bne.s	.subanims
 
+.anim0:
+		move.w	d4,obX(a0)
+		move.w	(a1)+,obY(a0)
+		move.b	(a3),mainspr_mapframe(a0)
+		bra.s	.skipsubanims
+
+.subanims:
+		move.w	d4,(a2)+				; sub?_x_pos
+		move.w	(a1)+,(a2)+				; sub?_y_pos
+		adda.w	#$18,a3
+		move.b	(a3),1(a2)				; sub?_mapframe
+		addq.w	#2,a2					; skip to next sub data
+
+.skipsubanims:
 		addq.b	#1,d3
 		cmpi.b	#4,d3
 		blo.w	.trail					; if 0-3, loop back
